@@ -2,308 +2,232 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { contactMethods, socialLinks } from "./Contact/contactData";
-import SwissMotion from "./SwissMotion";
-import ShapeAnimation from "./ShapeAnimation";
-import ParallaxLayer from "./ParallaxLayer";
-import StaggerItem from "./StaggerItem";
-import TextAnimation from "./TextAnimation";
-import { SectionHeader } from "./common";
+import { Mail, Github, Linkedin, MapPin, ArrowRight, ExternalLink } from "lucide-react";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
-
+  
   // Scroll-based animation
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
+  
   return (
     <section
       id="contact"
       ref={ref}
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-40 md:py-48 relative overflow-hidden bg-[var(--card)]"
     >
-      {/* Swiss style accent elements with animations */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <ParallaxLayer speed={0.1} direction="right" className="absolute left-0 top-0 z-0">
-          <ShapeAnimation 
-            type="diagonal" 
-            color="var(--accent)" 
-            size={160}
-            strokeWidth={5}
-            variant="draw"
-            delay={0.2}
-            duration={1.2}
-          />
-        </ParallaxLayer>
-        
-        <ParallaxLayer speed={0.12} direction="left" className="absolute right-0 top-0 z-0">
-          <ShapeAnimation 
-            type="diagonal" 
-            color="var(--accent-secondary)" 
-            size={160}
-            strokeWidth={5}
-            variant="draw"
-            delay={0.3}
-            duration={1.2}
-          />
-        </ParallaxLayer>
-        
-        <ParallaxLayer speed={0.08} direction="down" className="absolute left-1/2 transform -translate-x-1/2 top-1/4 z-0">
-          <ShapeAnimation 
-            type="line" 
-            color="var(--accent-tertiary)" 
-            size={200}
-            strokeWidth={3}
-            variant="draw"
-            delay={0.5}
-            duration={1.0}
-          />
-        </ParallaxLayer>
-        
-        <ParallaxLayer speed={0.2} direction="up" className="absolute right-16 bottom-1/3 z-0">
-          <SwissMotion type="pulse" delay={0.7} duration={2.0}>
-            <div className="relative">
-              <ShapeAnimation 
-                type="circle" 
-                color="var(--accent)" 
-                size={60}
-                variant="pulse"
-                delay={0.7}
-                loop={true}
-              />
-              <motion.div 
-                className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[var(--background)] uppercase tracking-wider"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.0, duration: 0.5 }}
-              >
-                <TextAnimation 
-                  text="Contact" 
-                  variant="char-by-char" 
-                  delay={1.2} 
-                  duration={0.03}
-                />
-              </motion.div>
-            </div>
-          </SwissMotion>
-        </ParallaxLayer>
+      {/* Grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none"></div>
+      
+      {/* Diagonal decoration */}
+      <div className="absolute top-0 left-0 w-full h-16 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-32 bg-[var(--background)] transform -skew-y-3"></div>
       </div>
-
-      <div className="swiss-container relative z-10">
-        <SectionHeader 
-          title="CONTACT"
-          description="I'm currently available for freelance work and collaboration opportunities. Feel free to reach out if you have a project in mind or just want to connect."
-          accentColor="secondary"
-          textAnimationVariant="typewriter"
-          motionDelay={0.2}
-          className="perspective"
-        />
-
-        <motion.div
-          className="swiss-grid"
-          style={{ y: contentY }}
+      
+      {/* Decorative elements */}
+      <motion.div 
+        className="absolute top-32 left-6 w-6 h-32 bg-[var(--accent)]"
+        initial={{ height: 0 }}
+        whileInView={{ height: 128 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      ></motion.div>
+      <motion.div 
+        className="absolute bottom-32 right-6 w-6 h-32 bg-[var(--foreground)]"
+        initial={{ height: 0 }}
+        whileInView={{ height: 128 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      ></motion.div>
+      
+      <div className="brutalist-container relative z-10 pt-16">
+        {/* Section heading */}
+        <motion.div 
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-24 md:mb-32"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          {/* Contact Info */}
-          <SwissMotion 
-            type="slide" 
-            delay={0.3} 
-            duration={0.7} 
-            className="swiss-asymmetric-left"
-          >
-            <div className="swiss-card relative">
-              <SwissMotion type="reveal" delay={0.4} duration={0.5}>
-                <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)]"></div>
-              </SwissMotion>
-              
-              <TextAnimation
-                text="LET'S WORK TOGETHER"
-                variant="reveal"
-                delay={0.5}
-                duration={1.0}
-                className="swiss-heading-3 mb-8"
+          <h2 className="text-5xl md:text-7xl font-bold mb-6 md:mb-0 inline-flex items-center tracking-tighter">
+            <span className="text-[var(--accent)] mr-4">/</span>
+            <span className="relative">
+              CONTACT
+              <motion.span 
+                className="absolute -bottom-3 left-0 h-1 bg-[var(--accent)]"
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
               />
-              
-              <SwissMotion type="stagger" staggerChildren={0.1} className="space-y-8">
-                {contactMethods.map((method, index) => (
-                  <StaggerItem 
-                    key={method.title} 
-                    type="slide" 
-                    direction={index % 2 === 0 ? "left" : "right"}
-                    className="flex"
-                  >
-                    <div className="mr-4 mt-1">
-                      <div className="w-6 h-6 bg-[var(--card-hover)] flex items-center justify-center">
-                        {method.icon}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-bold uppercase tracking-wide mb-2">
-                        {method.title}
-                      </h4>
-                      <a 
-                        href={method.link} 
-                        className="text-[var(--accent)] hover:underline"
-                        target={method.title === "Email" ? "_self" : "_blank"}
-                        rel="noopener noreferrer"
-                      >
-                        {method.value}
-                      </a>
-                    </div>
-                  </StaggerItem>
-                ))}
-              </SwissMotion>
-            </div>
-          </SwissMotion>
-
-          {/* Social Links */}
-          <SwissMotion 
-            type="slide" 
-            delay={0.5} 
-            duration={0.7} 
-            className="swiss-asymmetric-right mt-12 md:mt-0"
+            </span>
+          </h2>
+          <motion.div 
+            className="brutalist-tag py-3 px-5"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="swiss-card relative overflow-hidden">
-              <SwissMotion type="reveal" delay={0.6} duration={0.5}>
-                <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-tertiary)]"></div>
-              </SwissMotion>
+            GET IN TOUCH
+          </motion.div>
+        </motion.div>
+        
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-4xl mx-auto"
+          style={{ opacity, y }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {/* Main contact info */}
+          <motion.div 
+            className="md:col-span-1"
+            variants={itemVariants}
+          >
+            <motion.div 
+              className="brutalist-card h-full border-4 p-10 md:p-12"
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <h3 className="text-2xl font-bold mb-8 tracking-tighter inline-flex items-center">
+                <span className="w-6 h-6 bg-[var(--accent)] mr-4"></span>
+                LET'S TALK
+              </h3>
+              <p className="mb-10 text-lg">
+                Have a project in mind or want to discuss potential opportunities? I'm always open to new challenges and collaborations.
+              </p>
               
-              <SwissMotion type="reveal" delay={0.7} duration={0.5}>
-                <div className="absolute bottom-0 left-0 w-2/3 h-1 bg-[var(--accent)]"></div>
-              </SwissMotion>
-              
-              <TextAnimation
-                text="CONNECT WITH ME"
-                variant="reveal"
-                delay={0.7}
-                duration={1.0}
-                className="swiss-heading-3 mb-8"
-              />
-              
-              <div className="relative">
-                <div className="absolute inset-0 grid grid-cols-6 grid-rows-6 opacity-5 pointer-events-none">
-                  {Array.from({ length: 36 }).map((_, i) => (
-                    <div key={i} className="border border-[var(--foreground)]"></div>
-                  ))}
-                </div>
-                
-                <div className="grid grid-cols-3 gap-0 relative">
-                  {socialLinks.map((social, index) => (
-                    <SwissMotion
-                      key={social.name}
-                      type="scale"
-                      delay={0.8 + (index * 0.15)}
-                      duration={0.6}
-                      whileHover="scale"
-                      className={`${index === 0 ? 'col-span-3 mb-8' : 'col-span-1'}`}
-                    >
-                      <div className={`
-                        ${index === 0 ? 'flex items-center p-6 bg-[var(--card-hover)]' : 'flex flex-col items-center p-4'}
-                        relative overflow-hidden group
-                      `}>
-                        <div className="absolute inset-0 bg-[var(--accent)] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-                        
-                        {index === 0 ? (
-                          <>
-                            <div className="mr-6 p-4 bg-[var(--background)] relative">
-                              <social.icon size={36} className="text-[var(--accent)] transition-transform group-hover:scale-110 duration-300" />
-                              <SwissMotion type="reveal" delay={1.0} duration={0.4}>
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--accent-secondary)]"></div>
-                              </SwissMotion>
-                            </div>
-                            <div>
-                              <h4 className="text-lg font-bold uppercase tracking-wide mb-2">{social.name}</h4>
-                              <p className="text-sm text-[var(--muted)] mb-2">Professional Network</p>
-                              <a 
-                                href={social.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center text-[var(--accent)] hover:underline"
-                              >
-                                <span>Connect</span>
-                                <svg className="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </a>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="p-4 mb-2 relative">
-                              <social.icon size={28} className="text-[var(--foreground)] transition-transform group-hover:scale-110 group-hover:text-[var(--accent)] duration-300" />
-                              {index === 1 && (
-                                <SwissMotion type="reveal" delay={0.9} duration={0.4}>
-                                  <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-[var(--accent)]"></div>
-                                </SwissMotion>
-                              )}
-                              {index === 2 && (
-                                <SwissMotion type="reveal" delay={0.9} duration={0.4}>
-                                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--accent-tertiary)]"></div>
-                                </SwissMotion>
-                              )}
-                            </div>
-                            <h4 className="text-base font-bold uppercase tracking-wide mb-1">{social.name}</h4>
-                            <a 
-                              href={social.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs text-[var(--accent)] hover:underline"
-                            >
-                              View Profile
-                            </a>
-                          </>
-                        )}
-                      </div>
-                    </SwissMotion>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Availability indicator */}
-              <SwissMotion type="fade" delay={1.1} duration={0.6} className="mt-12 pt-8 border-t border-[var(--border)]">
-                <div className="flex items-start">
-                  <div className="mr-4 mt-1">
-                    <motion.div 
-                      className="w-4 h-4 bg-[var(--accent)]"
-                      animate={{ scale: [1, 1.15, 1] }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"  
-                      }}
-                    />
+              <div className="space-y-8 mb-10">
+                <motion.div 
+                  className="flex items-center"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 bg-[var(--background)]">
+                    <Mail size={28} />
                   </div>
                   <div>
-                    <p className="text-sm uppercase tracking-wider mb-2 font-semibold">
-                      Available for new projects and collaborations
-                    </p>
-                    <p className="text-xs text-[var(--muted)] uppercase tracking-wider">
-                      Prefer a quick response? Send me a direct message on LinkedIn or email me for project inquiries.
-                    </p>
+                    <div className="text-base font-mono mb-1">EMAIL</div>
+                    <a href="mailto:hello@example.com" className="hover:text-[var(--accent)] transition-colors group text-lg">
+                      <span className="group-hover:underline">hello@example.com</span>
+                    </a>
                   </div>
-                </div>
-              </SwissMotion>
-            </div>
-          </SwissMotion>
-        </motion.div>
-
-        {/* Footer note */}
-        <SwissMotion type="fade" delay={1.0} duration={0.7} className="mt-16 text-center">
-          <p className="text-sm uppercase tracking-wider text-[var(--muted)]">Thanks for viewing my portfolio</p>
+                </motion.div>
+                
+                <motion.div 
+                  className="flex items-center"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 bg-[var(--background)]">
+                    <MapPin size={28} />
+                  </div>
+                  <div>
+                    <div className="text-base font-mono mb-1">LOCATION</div>
+                    <div className="text-lg">Seattle, Washington</div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+          
+          {/* Social links */}
           <motion.div 
-            className="w-1 h-8 bg-[var(--foreground)]/30 mx-auto mt-4"
-            animate={{ scaleY: [0.5, 1, 0.5] }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"  
-            }}
-          />
-        </SwissMotion>
+            className="md:col-span-1"
+            variants={itemVariants}
+          >
+            <motion.div 
+              className="brutalist-card h-full border-4 p-10 md:p-12"
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <h3 className="text-2xl font-bold mb-8 tracking-tighter inline-flex items-center">
+                <span className="w-6 h-6 bg-[var(--accent)] mr-4"></span>
+                CONNECT
+              </h3>
+              
+              <div className="space-y-8">
+                <motion.a 
+                  href="https://github.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center group py-4 border-b-2 border-dashed border-[var(--foreground)] hover:border-[var(--accent)]"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
+                    <Github size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-base font-mono text-[var(--accent)] mb-1">GITHUB</div>
+                    <div className="flex items-center group-hover:text-[var(--accent)] text-lg">
+                      github.com/username
+                      <ExternalLink size={16} className="ml-3 opacity-60 group-hover:opacity-100" />
+                    </div>
+                  </div>
+                </motion.a>
+                
+                <motion.a 
+                  href="https://linkedin.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center group py-4 border-b-2 border-dashed border-[var(--foreground)] hover:border-[var(--accent)]"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
+                    <Linkedin size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-base font-mono text-[var(--accent)] mb-1">LINKEDIN</div>
+                    <div className="flex items-center group-hover:text-[var(--accent)] text-lg">
+                      linkedin.com/in/username
+                      <ExternalLink size={16} className="ml-3 opacity-60 group-hover:opacity-100" />
+                    </div>
+                  </div>
+                </motion.a>
+                
+                <motion.a 
+                  href="/resume.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center mt-10 brutalist-button group py-4 px-6 text-lg"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span>DOWNLOAD RESUME</span>
+                  <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={20} />
+                </motion.a>
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

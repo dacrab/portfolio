@@ -1,37 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  /* Swiss Style color palette with softer black and white */
-  --background: #f8f8f8;
-  --foreground: #1a1a1a;
-  --accent: #ff0000;
-  --accent-light: #ff3333;
-  --accent-dark: #cc0000;
-  --accent-secondary: #0000ff;
-  --accent-tertiary: #ffcc00;
-  --muted: #666666;
-  --card: #f5f5f5;
-  --card-hover: #ebebeb;
-  --border: #dddddd;
+  /* Brutalist color palette */
+  --background: #ffffff;
+  --foreground: #000000;
+  --accent: #ff2d20;
+  --accent-light: #ff5a4f;
+  --accent-dark: #cc1e14;
+  --accent-secondary: #2563eb;
+  --accent-tertiary: #fbbf24;
+  --muted: #6b7280;
+  --card: #f2f2f2;
+  --card-hover: #e5e5e5;
+  --border: #000000;
   
   /* RGB variables for rgba() functions */
-  --background-rgb: 248, 248, 248;
-  --foreground-rgb: 26, 26, 26;
-  --card-rgb: 245, 245, 245;
-  --border-rgb: 221, 221, 221;
-  --accent-rgb: 255, 0, 0;
-  --accent-light-rgb: 255, 51, 51;
-  --accent-dark-rgb: 204, 0, 0;
-  --accent-secondary-rgb: 0, 0, 255;
-  --accent-tertiary-rgb: 255, 204, 0;
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0;
+  --card-rgb: 242, 242, 242;
+  --border-rgb: 0, 0, 0;
+  --accent-rgb: 255, 45, 32;
+  --accent-light-rgb: 255, 90, 79;
+  --accent-dark-rgb: 204, 30, 20;
+  --accent-secondary-rgb: 37, 99, 235;
+  --accent-tertiary-rgb: 251, 191, 36;
   
-  /* Swiss grid system variables */
+  /* Brutalist grid system variables */
   --grid-unit: 8px;
   --grid-column: 12;
   --grid-gap: calc(var(--grid-unit) * 3);
   
+  /* Spacing variables */
+  --spacing-xs: 0.5rem;    /* 8px */
+  --spacing-sm: 1rem;      /* 16px */
+  --spacing-md: 2rem;      /* 32px */
+  --spacing-lg: 4rem;      /* 64px */
+  --spacing-xl: 6rem;      /* 96px */
+  --spacing-2xl: 8rem;     /* 128px */
+  --spacing-3xl: 10rem;    /* 160px */
+  
   /* Skill card background - light theme */
-  --skill-card-bg: #ebebeb;
+  --skill-card-bg: #f2f2f2;
 }
 
 @theme inline {
@@ -48,28 +57,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #121212;
-    --foreground: #f2f2f2;
-    --accent: #ff0000;
-    --accent-light: #ff3333;
-    --accent-dark: #cc0000;
-    --accent-secondary: #0055ff;
-    --accent-tertiary: #ffcc00;
-    --muted: #999999;
+    --background: #111111;
+    --foreground: #ffffff;
+    --accent: #ff2d20;
+    --accent-light: #ff5a4f;
+    --accent-dark: #cc1e14;
+    --accent-secondary: #3b82f6;
+    --accent-tertiary: #fbbf24;
+    --muted: #9ca3af;
     --card: #1a1a1a;
-    --card-hover: #2a2a2a;
-    --border: #333333;
+    --card-hover: #222222;
+    --border: #ffffff;
     
     /* RGB variables for rgba() functions */
-    --background-rgb: 18, 18, 18;
-    --foreground-rgb: 242, 242, 242;
+    --background-rgb: 17, 17, 17;
+    --foreground-rgb: 255, 255, 255;
     --card-rgb: 26, 26, 26;
-    --border-rgb: 51, 51, 51;
-    --accent-rgb: 255, 0, 0;
-    --accent-light-rgb: 255, 51, 51;
-    --accent-dark-rgb: 204, 0, 0;
-    --accent-secondary-rgb: 0, 85, 255;
-    --accent-tertiary-rgb: 255, 204, 0;
+    --border-rgb: 255, 255, 255;
+    --accent-rgb: 255, 45, 32;
+    --accent-light-rgb: 255, 90, 79;
+    --accent-dark-rgb: 204, 30, 20;
+    --accent-secondary-rgb: 59, 130, 246;
+    --accent-tertiary-rgb: 251, 191, 36;
     
     /* Skill card background - dark theme */
     --skill-card-bg: #1a1a1a;
@@ -82,6 +91,161 @@ body {
   font-family: var(--font-sans);
   line-height: 1.5;
   letter-spacing: 0.01em;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Make sure we get a clean slate */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+h1 {
+  font-size: 5rem;
+  line-height: 1;
+}
+
+h2 {
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+h4 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h5 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+h6 {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+button, 
+input, 
+textarea {
+  font-family: inherit;
+}
+
+/* Button reset */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Utility classes */
+.bg-accent {
+  background-color: var(--accent);
+  color: var(--background);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--foreground);
+  border: 2px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Prevent scroll on page transitions */
+.no-scroll {
+  overflow: hidden;
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--accent);
+  color: var(--background);
+}
+
+/* Tailwind utilities extension */
+@layer utilities {
+  .border-brutalist {
+    @apply border-2 border-[var(--foreground)];
+  }
+  
+  .hover-shift {
+    @apply transition-transform duration-200 hover:-translate-y-1 hover:translate-x-1;
+  }
+  
+  .border-brutalist-accent {
+    @apply border-2 border-[var(--accent)];
+  }
 }
 
 /* Swiss Style Typography Classes */
@@ -606,5 +770,52 @@ body {
 /* Font size utility */
 .text-125 {
   font-size: 1.25rem;
+}
+
+/* Section Spacing */
+section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+section > .brutalist-container {
+  padding-top: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+}
+
+/* Content Spacing */
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Spacing between components */
+.content-block {
+  margin-bottom: var(--spacing-lg);
+}
+
+.content-block:last-child {
+  margin-bottom: 0;
+}
+
+/* Card content spacing */
+.card-content {
+  padding: var(--spacing-md);
+}
+
+/* List item spacing */
+li {
+  margin-bottom: var(--spacing-xs);
+}
+
+li:last-child {
+  margin-bottom: 0;
+}
+
+/* Flex and grid gaps */
+.flex-gap {
+  gap: var(--spacing-md);
+}
+
+.grid-gap {
+  gap: var(--spacing-md);
 }
 

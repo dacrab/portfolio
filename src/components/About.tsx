@@ -2,13 +2,27 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import BioSection from "./About/BioSection";
-import ProfileImage from "./About/ProfileImage";
-import SwissMotion from "./SwissMotion";
-import ShapeAnimation from "./ShapeAnimation";
-import ParallaxLayer from "./ParallaxLayer";
-import StaggerItem from "./StaggerItem";
-import { SectionHeader } from "./common";
+
+// Skills data
+const SKILLS = [
+  { category: "FRONTEND", items: ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "CSS/SCSS", "HTML5"] },
+  { category: "BACKEND", items: ["Node.js", "Express", "MongoDB", "PostgreSQL", "REST APIs", "GraphQL"] },
+  { category: "TOOLS", items: ["Git", "GitHub", "VS Code", "Docker", "Figma", "CI/CD", "AWS"] }
+];
+
+// Animated highlight text component
+const HighlightText = ({ children }: { children: React.ReactNode }) => (
+  <span className="relative inline">
+    <span className="relative z-10">{children}</span>
+    <motion.span 
+      className="absolute bottom-0 left-0 w-full h-[0.3em] bg-[var(--accent)] z-0 opacity-30"
+      initial={{ width: 0 }}
+      whileInView={{ width: "100%" }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    />
+  </span>
+);
 
 export default function About() {
   const ref = useRef<HTMLElement>(null);
@@ -19,105 +33,150 @@ export default function About() {
     offset: ["start end", "end start"]
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const decorY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
-  // Signature "About" section animations - multiple diagonal lines
-  const diagonalCount = 5;
-  const diagonals = Array.from({ length: diagonalCount });
-
   return (
     <section
       id="about"
       ref={ref}
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-40 md:py-48 relative overflow-hidden bg-[var(--background)]"
     >
-      {/* Swiss style accent elements with unique About section animations */}
-      <ParallaxLayer speed={0.15} direction="left" className="absolute right-0 top-1/4 z-0">
-        <ShapeAnimation 
-          type="line" 
-          color="var(--accent)" 
-          size={150} 
-          strokeWidth={16}
-          variant="draw"
-          delay={0.3}
-          duration={1.2}
-        />
-      </ParallaxLayer>
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none"></div>
       
-      {/* Multiple diagonal lines with staggered animations - unique to About */}
-      {diagonals.map((_, i) => (
-        <ParallaxLayer 
-          key={`diagonal-${i}`} 
-          speed={0.05 + (i * 0.02)} 
-          direction="right" 
-          className={`absolute left-1/4 z-0`}
-          style={{ top: `${20 + (i * 12)}%` }}
-        >
-          <ShapeAnimation 
-            type="diagonal" 
-            color="var(--accent-secondary)" 
-            size={80 - (i * 10)} 
-            strokeWidth={2}
-            variant="draw"
-            delay={0.2 + (i * 0.1)}
-            duration={0.8}
-          />
-        </ParallaxLayer>
-      ))}
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-6 h-16 bg-[var(--accent)]"></div>
+      <div className="absolute top-0 left-6 w-20 h-6 bg-[var(--accent)]"></div>
+      <div className="absolute bottom-0 right-0 w-6 h-16 bg-[var(--foreground)]"></div>
+      <div className="absolute bottom-0 right-6 w-20 h-6 bg-[var(--foreground)]"></div>
       
-      <ParallaxLayer speed={0.2} direction="up" className="absolute left-16 top-16 z-0">
-        <ShapeAnimation 
-          type="square" 
-          color="var(--accent-tertiary)" 
-          size={48} 
-          variant="rotate"
-          delay={0.2}
-          loop={true}
-        />
-      </ParallaxLayer>
-
-      <div className="swiss-container relative z-10">
-        {/* Section header with common component */}
-        <SectionHeader 
-          title="ABOUT"
-          description="I'm a full-stack developer with a passion for creating elegant, user-centered digital experiences with clean and efficient code."
-          accentColor="tertiary"
-          textAnimationVariant="reveal"
-          motionDelay={0.2}
-        />
-
-        {/* Content with Swiss style grid and alternating animations */}
+      <div className="brutalist-container relative z-10 max-w-6xl mx-auto px-6">
+        {/* Section heading - enhanced with animation */}
         <motion.div 
-          className="swiss-grid"
-          style={{ y: contentY }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-32 md:mb-40"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          <SwissMotion 
-            type="slide" 
-            delay={0.3} 
-            duration={0.7}
-            className="swiss-asymmetric-left"
+          <h2 className="text-5xl md:text-7xl font-bold mb-10 md:mb-0 inline-flex items-center tracking-tighter">
+            <span className="text-[var(--accent)] mr-6">/</span>
+            <span className="relative">
+              ABOUT ME
+              <motion.span 
+                className="absolute -bottom-2 left-0 h-1 bg-[var(--accent)]"
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              />
+            </span>
+          </h2>
+          <motion.div 
+            className="brutalist-tag text-lg"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <BioSection />
-          </SwissMotion>
-          
-          <SwissMotion 
-            type="scale" 
-            delay={0.5} 
-            duration={0.8}
-            className="swiss-asymmetric-right mt-12 md:mt-0"
-          >
-            <ProfileImage />
-          </SwissMotion>
+            WHO I AM
+          </motion.div>
         </motion.div>
         
-        {/* About section signature: Staggered grid of squares at the bottom */}
-        <SwissMotion type="stagger" staggerChildren={0.05} delay={0.7} className="mt-16 grid grid-cols-6 md:grid-cols-12 gap-2 max-w-4xl mx-auto">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <StaggerItem key={`square-${i}`} type="scale" whileHover="scale">
-              <div className={`aspect-square ${i % 3 === 0 ? 'bg-[var(--accent)]' : i % 3 === 1 ? 'bg-[var(--accent-secondary)]' : 'bg-[var(--accent-tertiary)]'} opacity-${20 + (i * 5)}`}></div>
-            </StaggerItem>
-          ))}
-        </SwissMotion>
+        {/* Content */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-24"
+          style={{ opacity: contentOpacity }}
+        >
+          {/* Decorative element with improved animation */}
+          <motion.div 
+            className="md:col-span-5 order-2 md:order-1 hidden md:block"
+            style={{ y: decorY }}
+          >
+            <div className="brutalist-box aspect-[4/5] relative p-10 flex flex-col justify-between border-4">
+              <div className="grid grid-cols-3 gap-8 h-full">
+                {[...Array(9)].map((_, index) => (
+                  <motion.div 
+                    key={index}
+                    className={`${index % 3 === 0 ? 'bg-[var(--accent)]' : index % 2 === 0 ? 'bg-[var(--foreground)]' : 'border-2 border-[var(--foreground)]'}`}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ 
+                      duration: 0.5, 
+                      delay: 0.05 * index,
+                      ease: "easeOut"
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="absolute -bottom-6 -right-6 w-2/3 h-16 bg-[var(--foreground)] flex items-center justify-center">
+                <span className="text-[var(--background)] font-mono text-base tracking-wider">DEVELOPER</span>
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* Text content with improved typography and animations */}
+          <div className="md:col-span-7 order-1 md:order-2">
+            <motion.div 
+              className="brutalist-card h-full flex flex-col justify-between border-4 p-10 md:p-14"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div>
+                <p className="text-xl md:text-3xl mb-10 leading-relaxed">
+                  I'm a passionate full-stack web developer specializing in creating <HighlightText>unique digital experiences</HighlightText>. With a background in both design and development, I bridge the gap between aesthetics and functionality.
+                </p>
+                <p className="mb-14 leading-relaxed text-lg">
+                  My approach combines clean code with creative problem-solving to build responsive, accessible and performant web applications. I'm constantly exploring new technologies while maintaining a <HighlightText>strong foundation</HighlightText> in proven development practices.
+                </p>
+                <div className="brutalist-divider my-16"></div>
+              </div>
+              
+              {/* Skills - improved layout and animations */}
+              <div>
+                <h3 className="text-2xl font-bold mb-10 font-mono inline-flex items-center">
+                  <span className="w-6 h-6 bg-[var(--accent)] mr-4"></span>
+                  TECHNICAL SKILLS
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                  {SKILLS.map((skillGroup, groupIdx) => (
+                    <motion.div 
+                      key={skillGroup.category} 
+                      className="border-2 border-[var(--foreground)] overflow-hidden"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 * groupIdx }}
+                    >
+                      <div className="bg-[var(--foreground)] text-[var(--background)] py-3 px-4 font-mono text-base tracking-wider">
+                        {skillGroup.category}
+                      </div>
+                      <ul className="py-6 px-6">
+                        {skillGroup.items.map((skill, idx) => (
+                          <motion.li 
+                            key={skill} 
+                            className="mb-4 last:mb-0 flex items-center"
+                            initial={{ opacity: 0, x: -10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.3, delay: 0.05 * idx + 0.2 * groupIdx }}
+                          >
+                            <span className="inline-block w-3 h-3 bg-[var(--accent)] mr-4"></span>
+                            <span className="text-base">{skill}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

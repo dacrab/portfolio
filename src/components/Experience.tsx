@@ -1,180 +1,317 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { motion, useInView } from "framer-motion";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { SectionHeader } from "./common";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Calendar, MapPin, ExternalLink, Briefcase, GraduationCap } from "lucide-react";
 
-// Components
-import LottieVisualization from "./Experience/LottieVisualization";
-import SkillProgressions from "./Experience/SkillProgressions";
-import Timeline from "./Experience/Timeline";
-import SwissMotion from "./SwissMotion";
-import ShapeAnimation from "./ShapeAnimation";
-import ParallaxLayer from "./ParallaxLayer";
+// Work experience data
+const EXPERIENCE = [
+  {
+    id: 1,
+    company: "TECH INNOVATIONS INC",
+    title: "Senior Frontend Developer",
+    period: "2021 - Present",
+    location: "New York, NY",
+    website: "https://example.com/techinnovations",
+    description: "Lead development of multiple client projects using React, Next.js, and TypeScript. Implemented CI/CD pipelines and improved code quality standards.",
+    highlights: [
+      "Developed a component library used across 15+ client projects",
+      "Improved app performance by 45% through code optimization",
+      "Mentored junior developers and conducted technical interviews"
+    ]
+  },
+  {
+    id: 2,
+    company: "WEBCRAFT SOLUTIONS",
+    title: "Full Stack Developer",
+    period: "2019 - 2021",
+    location: "Boston, MA",
+    website: "https://example.com/webcraft",
+    description: "Worked on end-to-end development of web applications using MERN stack. Designed and implemented RESTful APIs and database architectures.",
+    highlights: [
+      "Built an e-commerce platform serving 10k+ monthly users",
+      "Reduced database query times by 60% through optimization",
+      "Integrated payment processing systems and authentication"
+    ]
+  },
+  {
+    id: 3,
+    company: "DIGITAL SPHERE",
+    title: "Junior Web Developer",
+    period: "2017 - 2019",
+    location: "Seattle, WA",
+    website: "https://example.com/digitalsphere",
+    description: "Started as an intern and grew into a junior developer role. Focused on frontend implementations with HTML, CSS, and JavaScript.",
+    highlights: [
+      "Created responsive designs for 20+ client websites",
+      "Assisted in migrating legacy applications to modern frameworks",
+      "Developed custom WordPress themes and plugins"
+    ]
+  }
+];
 
-// Constants - Reduced for mobile
-const getLineCount = (isMobile: boolean) => isMobile ? 4 : 7;
-const getCircleCounts = (isMobile: boolean) => isMobile ? [1, 2] : [1, 2, 3];
+// Education data
+const EDUCATION = [
+  {
+    id: 1,
+    institution: "UNIVERSITY OF TECHNOLOGY",
+    degree: "Bachelor of Science in Computer Science",
+    period: "2013 - 2017",
+    location: "San Francisco, CA",
+    description: "Focused on software engineering, web technologies, and data structures. Graduated with honors."
+  },
+  {
+    id: 2,
+    institution: "TECH BOOTCAMP",
+    degree: "Full Stack Web Development",
+    period: "2017",
+    location: "Online",
+    description: "Intensive 12-week program covering modern web development technologies and practices."
+  }
+];
 
 export default function Experience() {
-  const isMobile = useIsMobile();
+  const ref = useRef<HTMLElement>(null);
   
-  // Memoized constants based on device
-  const LINE_COUNT = useMemo(() => getLineCount(isMobile), [isMobile]);
-  const CIRCLE_COUNTS = useMemo(() => getCircleCounts(isMobile), [isMobile]);
-  
-  // Helper functions for optimized animations
-  const getOptimizedDelay = (baseDelay: number) => isMobile ? baseDelay * 0.7 : baseDelay;
-  const getOptimizedDuration = (baseDuration: number) => isMobile ? baseDuration * 0.6 : baseDuration;
-  
-  // Refs for scroll animations
-  const refs = {
-    skills: useRef<HTMLDivElement>(null),
-    lottie: useRef<HTMLDivElement>(null),
-    timeline: useRef<HTMLDivElement>(null)
+  // Scroll-based animation
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
+  // Animation variants for staggered children
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
   };
 
-  // View state for animations
-  const inView = {
-    skills: useInView(refs.skills, { once: true, amount: isMobile ? 0.1 : 0.2 }),
-    lottie: useInView(refs.lottie, { once: true, amount: isMobile ? 0.1 : 0.2 }),
-    timeline: useInView(refs.timeline, { once: true, amount: 0.1 })
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
   };
 
   return (
-    <section id="experience" className="py-24 md:py-32 relative overflow-hidden">
-      {/* Decorative background elements - conditionally rendered and simplified for mobile */}
-      {(!isMobile || (isMobile && LINE_COUNT > 0)) && (
-        <div className="absolute left-4 md:left-12 top-0 bottom-0 w-12 z-0 flex flex-col justify-around">
-          {Array.from({ length: LINE_COUNT }).map((_, i) => (
-            <ParallaxLayer 
-              key={`line-${i}`} 
-              speed={isMobile ? 0.03 : 0.05 + (i * 0.03)} 
-              direction={i % 2 ? "left" : "right"}
-            >
-              <ShapeAnimation 
-                type="line"
-                color={`var(--accent${i % 3 ? i % 3 === 1 ? '-secondary' : '-tertiary' : ''})`}
-                size={isMobile ? (20 + (i * 5)) : (20 + (i * 10))}
-                strokeWidth={isMobile ? 1 : (i % 2 ? 2 : 4)}
-                variant={isMobile ? "draw" : "draw"}
-                delay={getOptimizedDelay(0.1 + (i * 0.1))}
-                duration={getOptimizedDuration(0.7)}
-                mobileOptimized={true}
-              />
-            </ParallaxLayer>
-          ))}
-        </div>
-      )}
+    <section
+      id="experience"
+      ref={ref}
+      className="py-48 md:py-64 relative overflow-hidden bg-[var(--background)]"
+    >
+      {/* Noise overlay with reduced opacity */}
+      <div className="brutalist-noise opacity-30"></div>
       
-      {/* Circles - reduced and simplified for mobile */}
-      {(!isMobile || (isMobile && CIRCLE_COUNTS.length > 0)) && (
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-0 flex flex-col justify-around">
-          {CIRCLE_COUNTS.map((i) => (
-            <ParallaxLayer 
-              key={`circle-${i}`} 
-              speed={isMobile ? 0.05 * i : 0.1 * i} 
-              direction={i % 2 ? "right" : "left"}
-            >
-              <ShapeAnimation 
-                type="circle"
-                color={`var(--accent${i === 2 ? '-secondary' : i === 3 ? '-tertiary' : ''})`}
-                size={isMobile ? 20 * i : 24 * i}
-                variant={isMobile ? "pulse" : (i % 2 ? "float" : "pulse")}
-                delay={getOptimizedDelay(0.3 * i)}
-                loop={!isMobile}
-                duration={isMobile ? 1.5 : undefined}
-                mobileOptimized={true}
-              />
-            </ParallaxLayer>
-          ))}
-        </div>
-      )}
-
-      {/* Main content */}
-      <div className="swiss-container relative z-10">
-        <SectionHeader 
-          title="EXPERIENCE"
-          description="My professional journey and skill development showcase my expertise in creating modern web solutions and solving complex technical challenges with elegant, efficient implementations."
-          accentColor="secondary"
-          textAnimationVariant={isMobile ? "reveal" : "split"}
-          motionDelay={getOptimizedDelay(0.1)}
-        />
-
+      {/* Grid pattern with increased size for more space */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:80px_80px] pointer-events-none"></div>
+      
+      {/* Larger decorative elements */}
+      <div className="absolute top-40 right-8 w-10 h-72 bg-[var(--accent)] hidden md:block"></div>
+      <div className="absolute bottom-40 left-8 w-10 h-72 bg-[var(--foreground)] hidden md:block"></div>
+      
+      <div className="brutalist-container relative z-10 max-w-6xl mx-auto">
+        {/* Section heading with more emphasis */}
         <motion.div 
-          className="max-w-6xl mx-auto mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ 
-            duration: getOptimizedDuration(0.5), 
-            delay: getOptimizedDelay(0.2) 
-          }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-32 md:mb-48"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          <div className="swiss-grid">
-            <SwissMotion 
-              type={isMobile ? "fade" : "slide"} 
-              delay={getOptimizedDelay(0.3)} 
-              duration={getOptimizedDuration(0.7)} 
-              className="swiss-asymmetric-left"
-              mobileOptimized={true}
-            >
-              <div className="swiss-card relative" ref={refs.lottie}>
-                <SwissMotion 
-                  type="reveal" 
-                  delay={getOptimizedDelay(0.4)} 
-                  duration={getOptimizedDuration(0.5)}
-                  mobileOptimized={true}
-                >
-                  <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)]" />
-                </SwissMotion>
-                <h3 className="swiss-heading-3 mb-8">SKILLS VISUALIZATION</h3>
-                <LottieVisualization isInView={inView.lottie} isMobile={isMobile} />
-              </div>
-            </SwissMotion>
-            
-            <SwissMotion 
-              type={isMobile ? "fade" : "slide"} 
-              delay={getOptimizedDelay(0.5)} 
-              duration={getOptimizedDuration(0.7)} 
-              className="swiss-asymmetric-right mt-12 md:mt-0"
-              mobileOptimized={true}
-            >
-              <div className="swiss-card relative" ref={refs.skills}>
-                <SwissMotion 
-                  type="reveal" 
-                  delay={getOptimizedDelay(0.6)} 
-                  duration={getOptimizedDuration(0.5)}
-                  mobileOptimized={true}
-                >
-                  <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-secondary)]" />
-                </SwissMotion>
-                <h3 className="swiss-heading-3 mb-8">SKILL PROGRESSION</h3>
-                <SkillProgressions isInView={inView.skills} isMobile={isMobile} />
-              </div>
-            </SwissMotion>
-          </div>
+          <h2 className="text-5xl md:text-7xl font-bold mb-10 md:mb-0 inline-flex items-center tracking-tighter">
+            <span className="text-[var(--accent)] mr-6">/</span>
+            <span className="relative">
+              EXPERIENCE
+              <motion.span 
+                className="absolute -bottom-3 left-0 h-2 bg-[var(--accent)]"
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              />
+            </span>
+          </h2>
+          <motion.div 
+            className="brutalist-tag text-lg py-4 px-6"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            WHERE I'VE WORKED
+          </motion.div>
         </motion.div>
 
-        <SwissMotion 
-          type="fade" 
-          delay={getOptimizedDelay(0.7)} 
-          duration={getOptimizedDuration(0.8)} 
-          className="mt-16 pt-16 border-t border-[var(--border)]"
-          mobileOptimized={true}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-24 mb-48"
+          style={{ opacity }}
         >
-          <SwissMotion 
-            type={isMobile ? "fade" : "slide"} 
-            delay={getOptimizedDelay(0.8)} 
-            duration={getOptimizedDuration(0.5)}
-            mobileOptimized={true}
-          >
-            <h3 className="swiss-heading-3 mb-12 text-center">CAREER TIMELINE</h3>
-          </SwissMotion>
-          <div ref={refs.timeline}>
-            <Timeline isInView={inView.timeline} isMobile={isMobile} />
+          <div className="md:col-span-1 order-2 md:order-1">
+            <motion.div 
+              className="brutalist-box p-12 md:sticky md:top-28 border-4"
+              style={{ y }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center mb-8">
+                <div className="bg-[var(--accent)] p-4 mr-5">
+                  <Briefcase className="text-[var(--background)]" size={32} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-2xl font-bold tracking-tight">WORK HISTORY</h3>
+              </div>
+              <p className="mb-10 text-lg">
+                My professional journey spans multiple roles focused on web development, from junior positions to senior leadership.
+              </p>
+              <div className="brutalist-divider h-1"></div>
+              <p className="text-base mt-10">
+                Swipe to see key responsibilities and achievements in each role.
+              </p>
+              
+              {/* Extra brutalist element */}
+              <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-[var(--foreground)] hidden md:block"></div>
+            </motion.div>
           </div>
-        </SwissMotion>
+          
+          <div className="md:col-span-2 order-1 md:order-2">
+            <motion.div 
+              className="space-y-32"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {EXPERIENCE.map((job, index) => (
+                <motion.div 
+                  key={job.id} 
+                  className="brutalist-card relative border-4 p-10 md:p-14"
+                  variants={itemVariants}
+                  whileHover={{ 
+                    y: -5,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  {/* Corner decoration - larger */}
+                  <div className="absolute -top-5 -left-5 w-10 h-10 bg-[var(--accent)]"></div>
+                  
+                  {/* Company and title */}
+                  <div className="mb-10">
+                    <div className="flex justify-between items-start flex-wrap gap-6">
+                      <h3 className="text-2xl md:text-3xl font-bold">{job.company}</h3>
+                      <a 
+                        href={job.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:text-[var(--accent)] transition-colors flex items-center text-base group px-4 py-3 border-2 border-[var(--foreground)]"
+                      >
+                        <span className="group-hover:underline mr-3">Visit</span>
+                        <ExternalLink size={16} className="opacity-70 group-hover:opacity-100" />
+                      </a>
+                    </div>
+                    <h4 className="text-xl font-medium text-[var(--accent)] mt-3">{job.title}</h4>
+                  </div>
+                  
+                  {/* Meta information */}
+                  <div className="flex flex-wrap gap-x-10 gap-y-5 mb-10 text-base border-l-4 border-[var(--foreground)] pl-6 py-3">
+                    <div className="flex items-center">
+                      <Calendar size={20} className="mr-3 opacity-70" />
+                      {job.period}
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin size={20} className="mr-3 opacity-70" />
+                      {job.location}
+                    </div>
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="mb-12 text-lg leading-relaxed">{job.description}</p>
+                  
+                  {/* Highlights */}
+                  <div>
+                    <div className="font-mono text-base mb-6 inline-flex items-center">
+                      <span className="inline-block w-5 h-5 bg-[var(--accent)] mr-4"></span>
+                      KEY ACHIEVEMENTS:
+                    </div>
+                    <ul className="space-y-5 pl-3">
+                      {job.highlights.map((highlight, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: 0.1 * i }}
+                        >
+                          <span className="inline-block w-3 h-3 bg-[var(--foreground)] mt-2 mr-4 flex-shrink-0"></span>
+                          <span>{highlight}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+        
+        {/* Education Section - with improved spacing */}
+        <div>
+          <motion.div 
+            className="mb-16 md:mb-24"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center mb-8">
+              <div className="bg-[var(--foreground)] p-4 mr-5">
+                <GraduationCap className="text-[var(--background)]" size={32} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold">EDUCATION</h3>
+            </div>
+            <div className="brutalist-divider"></div>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            {EDUCATION.map((edu, index) => (
+              <motion.div 
+                key={edu.id}
+                className="brutalist-card p-10 border-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 * index }}
+              >
+                <h4 className="text-2xl font-bold mb-4">{edu.institution}</h4>
+                <h5 className="text-xl font-medium text-[var(--accent)] mb-6">{edu.degree}</h5>
+                
+                <div className="flex flex-wrap gap-x-8 gap-y-4 mb-8 text-base">
+                  <div className="flex items-center">
+                    <Calendar size={18} className="mr-3 opacity-70" />
+                    {edu.period}
+                  </div>
+                  <div className="flex items-center">
+                    <MapPin size={18} className="mr-3 opacity-70" />
+                    {edu.location}
+                  </div>
+                </div>
+                
+                <p className="text-lg">{edu.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
