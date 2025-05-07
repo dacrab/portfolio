@@ -2,13 +2,9 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-
-// Skills data
-const SKILLS = [
-  { category: "FRONTEND", items: ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "CSS/SCSS", "HTML5"] },
-  { category: "BACKEND", items: ["Node.js", "Express", "MongoDB", "PostgreSQL", "REST APIs", "GraphQL"] },
-  { category: "TOOLS", items: ["Git", "GitHub", "VS Code", "Docker", "Figma", "CI/CD", "AWS"] }
-];
+import { SKILLS_BY_CATEGORY, ADAPTIVE_COLOR_ICONS, Skill } from "./About/types";
+import Image from "next/image";
+import Link from "next/link";
 
 // Animated highlight text component
 const HighlightText = ({ children }: { children: React.ReactNode }) => (
@@ -23,6 +19,40 @@ const HighlightText = ({ children }: { children: React.ReactNode }) => (
     />
   </span>
 );
+
+// Skill item with icon component
+const SkillItem = ({ skill }: { skill: Skill }) => {
+  const isAdaptiveColor = ADAPTIVE_COLOR_ICONS.includes(skill.name);
+
+  return (
+    <motion.li 
+      className="mb-4 last:mb-0 flex items-center group"
+      initial={{ opacity: 0, x: -10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ x: 3 }}
+    >
+      <Link 
+        href={skill.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="flex items-center w-full"
+      >
+        <div className={`w-9 h-9 flex items-center justify-center mr-3 border-2 border-[var(--foreground)] bg-[var(--background)] overflow-hidden transition-all group-hover:bg-[var(--foreground)] ${isAdaptiveColor ? 'invert dark:invert-0' : ''}`}>
+          <Image 
+            src={skill.icon} 
+            alt={skill.name} 
+            width={20} 
+            height={20}
+            className="transition-transform group-hover:scale-110"
+          />
+        </div>
+        <span className="text-base group-hover:text-[var(--accent)] transition-colors">{skill.name}</span>
+      </Link>
+    </motion.li>
+  );
+};
 
 export default function About() {
   const ref = useRef<HTMLElement>(null);
@@ -126,12 +156,18 @@ export default function About() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
+              {/* Using BioSection content structure but with our own styling */}
               <div>
                 <p className="text-xl md:text-3xl mb-10 leading-relaxed">
-                  I'm a passionate full-stack web developer specializing in creating <HighlightText>unique digital experiences</HighlightText>. With a background in both design and development, I bridge the gap between aesthetics and functionality.
+                  I'm a <HighlightText>passionate web developer</HighlightText> with expertise in modern frontend technologies.
+                  My journey in coding began with a curiosity about how digital experiences are created,
+                  and has evolved into a professional path focused on building <HighlightText>elegant, user-centered solutions</HighlightText>.
                 </p>
                 <p className="mb-14 leading-relaxed text-lg">
-                  My approach combines clean code with creative problem-solving to build responsive, accessible and performant web applications. I'm constantly exploring new technologies while maintaining a <HighlightText>strong foundation</HighlightText> in proven development practices.
+                  With a strong foundation in <HighlightText>React</HighlightText>, <HighlightText>Next.js</HighlightText>, and <HighlightText>TypeScript</HighlightText>, I create responsive
+                  web applications that balance aesthetic appeal with technical performance.
+                  I'm constantly exploring new technologies and design approaches to enhance the
+                  digital experiences I build.
                 </p>
                 <div className="brutalist-divider my-16"></div>
               </div>
@@ -143,9 +179,9 @@ export default function About() {
                   TECHNICAL SKILLS
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                  {SKILLS.map((skillGroup, groupIdx) => (
+                  {Object.entries(SKILLS_BY_CATEGORY).map(([category, skills], groupIdx) => (
                     <motion.div 
-                      key={skillGroup.category} 
+                      key={category} 
                       className="border-2 border-[var(--foreground)] overflow-hidden"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -153,21 +189,14 @@ export default function About() {
                       transition={{ duration: 0.5, delay: 0.1 * groupIdx }}
                     >
                       <div className="bg-[var(--foreground)] text-[var(--background)] py-3 px-4 font-mono text-base tracking-wider">
-                        {skillGroup.category}
+                        {category.toUpperCase()}
                       </div>
                       <ul className="py-6 px-6">
-                        {skillGroup.items.map((skill, idx) => (
-                          <motion.li 
-                            key={skill} 
-                            className="mb-4 last:mb-0 flex items-center"
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.3, delay: 0.05 * idx + 0.2 * groupIdx }}
-                          >
-                            <span className="inline-block w-3 h-3 bg-[var(--accent)] mr-4"></span>
-                            <span className="text-base">{skill}</span>
-                          </motion.li>
+                        {skills.map((skill, idx) => (
+                          <SkillItem 
+                            key={skill.name} 
+                            skill={skill} 
+                          />
                         ))}
                       </ul>
                     </motion.div>

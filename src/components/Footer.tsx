@@ -99,16 +99,16 @@ export default function Footer() {
             </h3>
             <div className="space-y-4">
               <a 
-                href="mailto:hello@example.com" 
+                href="mailto:vkavouras@proton.me" 
                 className="flex items-center group"
               >
                 <div className="w-8 h-8 border border-[var(--background)] flex items-center justify-center mr-3 group-hover:bg-[var(--accent)] group-hover:border-[var(--accent)] transition-colors">
                   <Mail size={16} />
                 </div>
-                <span className="group-hover:text-[var(--accent-light)] transition-colors">hello@example.com</span>
+                <span className="group-hover:text-[var(--accent-light)] transition-colors">vkavouras@proton.me</span>
               </a>
               <a 
-                href="https://github.com" 
+                href="https://github.com/dacrab" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center group"
@@ -120,7 +120,7 @@ export default function Footer() {
                 <ExternalLink size={12} className="ml-1 opacity-60" />
               </a>
               <a 
-                href="https://linkedin.com" 
+                href="https://linkedin.com/in/vkavouras" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center group"

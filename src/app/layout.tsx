@@ -1,10 +1,10 @@
 import "./globals.css";
 import "./brutalist.css";
 import type { Metadata, Viewport } from "next";
-import { Space_Mono, Inter } from "next/font/google";
+import { Space_Mono, Roboto_Mono, Archivo } from "next/font/google";
 import ClientLayout from "@/components/ClientLayout";
 
-// Define font variables - Space Mono for headings, Inter for body (more modern than Roboto)
+// Define font variables - Space Mono for headings, Archivo for body (better brutalist fit)
 const mono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -12,9 +12,9 @@ const mono = Space_Mono({
   variable: "--font-mono",
 });
 
-const sans = Inter({
+const sans = Archivo({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-sans",
 });
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yourportfolio.com",
+    url: "https://dacrab.github.io",
     title: "BRUTAL | DEVELOPER PORTFOLIO",
     description: "Modern brutalist portfolio showcasing web development projects with a focus on clean design",
     siteName: "Developer Portfolio",
@@ -67,8 +67,8 @@ export default function RootLayout({
           <div className="fixed top-0 left-0 w-5 h-screen bg-[var(--accent)] z-10 hidden md:block"></div>
           <div className="fixed top-0 right-0 w-5 h-screen bg-[var(--foreground)] z-10 hidden md:block"></div>
           
-          {/* Horizontal border decorations */}
-          <div className="fixed top-0 left-0 w-screen h-5 bg-[var(--foreground)] z-10 hidden md:block"></div>
+          {/* Horizontal border decorations - removing the top bar that's covering the navbar */}
+          {/* <div className="fixed top-0 left-0 w-screen h-5 bg-[var(--foreground)] z-10 hidden md:block"></div> */}
           <div className="fixed bottom-0 left-0 w-screen h-5 bg-[var(--accent)] z-10 hidden md:block"></div>
           
           {/* Brutalist corner decorations */}

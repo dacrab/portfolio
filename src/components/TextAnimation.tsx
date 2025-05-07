@@ -24,6 +24,9 @@ interface TextAnimationProps {
   disableOnMobile?: boolean;
 }
 
+// Swiss style easing curve
+const SWISS_EASE = [0.17, 0.67, 0.83, 0.67];
+
 export default function TextAnimation({
   text,
   variant = "reveal",
@@ -36,17 +39,16 @@ export default function TextAnimation({
   disableOnMobile = false
 }: TextAnimationProps) {
   const ref = useRef<HTMLElement>(null);
-  
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { amount: 0.2, once });
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
 
-  // Performance optimization detection
+  // Check for low-end devices
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     
-    const hasLowCores = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4;
     const nav = navigator as NavigatorWithMemory;
+    const hasLowCores = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4;
     const hasLowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const isComplexAnimation = ["typewriter", "char-by-char", "gradient"].includes(variant);
@@ -54,26 +56,25 @@ export default function TextAnimation({
     setIsLowEndDevice(hasLowCores || hasLowMemory || (isMobileDevice && isComplexAnimation));
   }, [variant]);
 
-  // Skip animations for mobile or low-end devices if disableOnMobile is true
+  // Skip animations for mobile or low-end devices if needed
   if ((isMobile && disableOnMobile) || (isMobile && isLowEndDevice)) {
     return createElement(as, { ref, className }, text);
   }
 
-  // Animation timing and variant optimizations
+  // Optimize animation parameters for mobile
   const optimizedDuration = isMobile && mobileOptimized ? duration * 0.5 : duration;
   const optimizedDelay = isMobile && mobileOptimized ? delay * 0.3 : delay;
   
   // Simplify animation variants on mobile
   const effectiveVariant = isMobile && mobileOptimized
-    ? variant === "char-by-char" ? "split" : variant === "gradient" ? "reveal" : variant
+    ? (variant === "char-by-char" ? "split" : variant === "gradient" ? "reveal" : variant)
     : variant;
   
-  // Common animation ease curve
-  const swissEase = [0.17, 0.67, 0.83, 0.67];
-
   // Group text for optimized animations
   const getGroupedText = (text: string, groupSize: number = 2): string[] => {
-    const items = variant === "split" ? text.split(" ") : text.split("");
+    const separator = variant === "split" ? " " : "";
+    const items = text.split(separator);
+    
     if (!isMobile || !mobileOptimized) return items;
     
     return items.reduce((acc: string[], item, i) => {
@@ -85,55 +86,56 @@ export default function TextAnimation({
   };
 
   // Animation variants
-  const revealVariants: Variants = {
-    hidden: { y: "100%" },
-    visible: { 
-      y: 0,
-      transition: { 
-        duration: optimizedDuration,
-        delay: optimizedDelay,
-        ease: swissEase
+  const variants = {
+    reveal: {
+      hidden: { y: "100%" },
+      visible: { 
+        y: 0,
+        transition: { 
+          duration: optimizedDuration,
+          delay: optimizedDelay,
+          ease: SWISS_EASE
+        }
       }
+    },
+    
+    split: {
+      hidden: { opacity: 0, y: 10 },
+      visible: (i: number) => ({
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration: optimizedDuration,
+          delay: optimizedDelay + i * (isMobile ? 0.03 : 0.1),
+          ease: SWISS_EASE
+        }
+      })
+    },
+    
+    typewriter: {
+      hidden: { width: 0 },
+      visible: { 
+        width: "100%",
+        transition: {
+          duration: optimizedDuration * (isMobile ? 1.2 : 1.5),
+          delay: optimizedDelay,
+          ease: SWISS_EASE
+        }
+      }
+    },
+    
+    charByChar: {
+      hidden: { opacity: 0, y: 5 },
+      visible: (i: number) => ({
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration: 0.2,
+          delay: optimizedDelay + i * (isMobile ? 0.01 : 0.03),
+          ease: SWISS_EASE
+        }
+      })
     }
-  };
-
-  const splitVariants: Variants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i: number) => ({
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: optimizedDuration,
-        delay: optimizedDelay + i * (isMobile ? 0.03 : 0.1),
-        ease: swissEase
-      }
-    })
-  };
-
-  const typewriterVariants: Variants = {
-    hidden: { width: 0 },
-    visible: { 
-      width: "100%",
-      transition: {
-        duration: optimizedDuration * (isMobile ? 1.2 : 1.5),
-        delay: optimizedDelay,
-        ease: swissEase,
-        times: isMobile ? undefined : Array.from({ length: 20 }).map((_, i) => i / 19)
-      }
-    }
-  };
-
-  const charByCharVariants: Variants = {
-    hidden: { opacity: 0, y: 5 },
-    visible: (i: number) => ({
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.2,
-        delay: optimizedDelay + i * (isMobile ? 0.01 : 0.03),
-        ease: swissEase
-      }
-    })
   };
 
   // Render the appropriate animation variant
@@ -143,7 +145,7 @@ export default function TextAnimation({
         return (
           <span className="overflow-hidden">
             <motion.span 
-              variants={revealVariants}
+              variants={variants.reveal}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
             >
@@ -161,7 +163,7 @@ export default function TextAnimation({
               <motion.span
                 key={i}
                 custom={i}
-                variants={splitVariants}
+                variants={variants.split}
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
                 className="inline-block mr-[0.25em]"
@@ -176,7 +178,7 @@ export default function TextAnimation({
       case "typewriter":
         return (
           <motion.span
-            variants={typewriterVariants}
+            variants={variants.typewriter}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             style={{ whiteSpace: "nowrap", overflow: "hidden", display: "inline-block" }}
@@ -235,7 +237,7 @@ export default function TextAnimation({
               <motion.span
                 key={i}
                 custom={i}
-                variants={charByCharVariants}
+                variants={variants.charByChar}
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
               >
@@ -252,8 +254,7 @@ export default function TextAnimation({
   };
 
   // Determine wrapper class based on variant
-  const needsFlexWrapper = ["reveal", "split", "typewriter", "gradient", "char-by-char"].includes(variant);
-  const wrapperClass = `${needsFlexWrapper ? "inline-flex items-center" : ""} ${className}`;
+  const wrapperClass = `${["reveal", "split", "typewriter", "gradient", "char-by-char"].includes(variant) ? "inline-flex items-center" : ""} ${className}`;
   
   // Render the component with the appropriate wrapper
   return createElement(as, { ref, className: wrapperClass }, renderAnimatedContent());

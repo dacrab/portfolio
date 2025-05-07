@@ -1,12 +1,13 @@
 import React from 'react';
 import { memo } from "react";
-import SwissMotion from "../SwissMotion";
+import SwissMotion, { SwissMotionType } from "../SwissMotion";
 
 // Types
 type AccentPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'custom';
 type AccentType = 'horizontal' | 'vertical' | 'diagonal';
 type AccentColor = 'primary' | 'secondary' | 'tertiary' | 'foreground';
 type AccentAnimation = 'reveal' | 'slide' | 'fade' | 'draw';
+type HoverEffect = "lift" | "glow" | "scale" | "rotate" | "none";
 
 interface AccentLineProps {
   position?: AccentPosition;
@@ -24,18 +25,31 @@ interface AccentLineProps {
 }
 
 // Constants
-const COLOR_MAP = {
+const COLOR_MAP: Record<AccentColor, string> = {
   primary: 'bg-[var(--accent)]',
   secondary: 'bg-[var(--accent-secondary)]',
   tertiary: 'bg-[var(--accent-tertiary)]',
   foreground: 'bg-[var(--foreground)]'
 };
 
-const POSITION_MAP = {
+const POSITION_MAP: Record<Exclude<AccentPosition, 'custom'>, string> = {
   'top-left': 'left-0 top-0',
   'top-right': 'right-0 top-0',
   'bottom-left': 'left-0 bottom-0',
   'bottom-right': 'right-0 bottom-0'
+};
+
+const ANIMATION_MAP: Record<AccentAnimation, SwissMotionType> = {
+  'slide': 'slide',
+  'fade': 'fade',
+  'draw': 'scale',
+  'reveal': 'reveal'
+};
+
+const HOVER_ANIMATION_MAP: Record<AccentType, HoverEffect> = {
+  'horizontal': 'scale',
+  'vertical': 'lift',
+  'diagonal': 'glow'
 };
 
 const AccentLine = memo(function AccentLine({
@@ -52,67 +66,43 @@ const AccentLine = memo(function AccentLine({
   rotate = 0,
   animateOnHover = false
 }: AccentLineProps) {
-  // Helpers
-  const getPositionClasses = () => 
-    position === 'custom' ? positionClasses : POSITION_MAP[position];
-
-  const getDimensionValue = (dimension: string | number) => {
-    if (typeof dimension === 'number') return `${dimension}px`;
-    if (['px', '%', 'rem'].some(unit => dimension.includes(unit))) return dimension;
-    return '';
-  };
-
-  const getDimensionClass = (dimension: string | number, dimensionType: 'width' | 'height') => {
-    if (typeof dimension === 'string' && !['px', '%', 'rem'].some(unit => dimension.includes(unit))) {
-      return `${dimensionType === 'width' ? 'w' : 'h'}-${dimension}`;
-    }
-    return '';
-  };
-
-  // Derived values
-  const widthClass = type === 'horizontal' || type === 'diagonal' ? getDimensionClass(width, 'width') : '';
-  const heightClass = type === 'vertical' || type === 'diagonal' ? getDimensionClass(height, 'height') : '';
-
-  const inlineStyle = {
-    width: type === 'horizontal' || type === 'diagonal' ? getDimensionValue(width) : '1px',
-    height: type === 'vertical' || type === 'diagonal' ? getDimensionValue(height) : '1px',
+  // Determine if dimension is a Tailwind class or direct value
+  const isDimensionClass = (value: string | number): boolean => 
+    typeof value === 'string' && !['px', '%', 'rem', 'em', 'vh', 'vw'].some(unit => String(value).includes(unit));
+  
+  // Format dimension for inline style
+  const formatDimension = (value: string | number): string => 
+    typeof value === 'number' || !isDimensionClass(value) ? `${value}${typeof value === 'number' ? 'px' : ''}` : '1px';
+  
+  // Get Tailwind class for dimension
+  const getDimensionClass = (value: string | number, prefix: 'w' | 'h'): string => 
+    isDimensionClass(value) ? `${prefix}-${value}` : '';
+  
+  // Computed values
+  const positionClass = position === 'custom' ? positionClasses : POSITION_MAP[position];
+  const widthClass = type !== 'vertical' ? getDimensionClass(width, 'w') : '';
+  const heightClass = type !== 'horizontal' ? getDimensionClass(height, 'h') : '';
+  const colorClass = COLOR_MAP[color];
+  const motionType = ANIMATION_MAP[animationType];
+  const hoverAnimation = animateOnHover ? HOVER_ANIMATION_MAP[type] : undefined;
+  
+  const style = {
+    width: type !== 'vertical' ? formatDimension(width) : '1px',
+    height: type !== 'horizontal' ? formatDimension(height) : '1px',
     transform: rotate ? `rotate(${rotate}deg)` : undefined,
     transformOrigin: 'center',
-  };
-  
-  // Get motion animation type based on the animationType
-  const getMotionType = () => {
-    switch (animationType) {
-      case 'slide': return 'slide';
-      case 'fade': return 'fade';
-      case 'draw': return 'scale'; // Use scale for draw-like effect
-      default: return 'reveal';
-    }
-  };
-  
-  // Get hover animation
-  const getHoverAnimation = () => {
-    if (!animateOnHover) return undefined;
-    
-    if (type === 'horizontal') {
-      return 'scale'; // Scale horizontally
-    } else if (type === 'vertical') {
-      return 'lift'; // Lift vertically
-    } else {
-      return 'glow'; // Glow for diagonal
-    }
   };
 
   return (
     <SwissMotion
-      type={getMotionType()}
+      type={motionType}
       delay={delay}
       duration={duration}
-      whileHover={getHoverAnimation()}
-      className={`absolute ${getPositionClasses()} ${widthClass} ${heightClass} ${COLOR_MAP[color]} ${className}`}
-      style={inlineStyle}
+      whileHover={hoverAnimation}
+      className={`absolute ${positionClass} ${widthClass} ${heightClass} ${colorClass} ${className}`}
+      style={style}
     >
-      <div className={type === 'diagonal' ? 'h-full w-full' : ''} />
+      {type === 'diagonal' && <div className="h-full w-full" />}
     </SwissMotion>
   );
 });

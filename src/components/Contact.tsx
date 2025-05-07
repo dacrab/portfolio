@@ -1,11 +1,28 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Mail, Github, Linkedin, MapPin, ArrowRight, ExternalLink } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { MapPin, ArrowRight, ExternalLink, Download, ChevronDown } from "lucide-react";
+import { contactMethods, socialLinks } from "./Contact/contactData";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
+  const [cvDropdownOpen, setCvDropdownOpen] = useState(false);
+  const cvButtonRef = useRef<HTMLDivElement>(null);
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cvButtonRef.current && !cvButtonRef.current.contains(event.target as Node) && cvDropdownOpen) {
+        setCvDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [cvDropdownOpen]);
   
   // Scroll-based animation
   const { scrollYProgress } = useScroll({
@@ -124,21 +141,24 @@ export default function Contact() {
               </p>
               
               <div className="space-y-8 mb-10">
-                <motion.div 
-                  className="flex items-center"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 bg-[var(--background)]">
-                    <Mail size={28} />
-                  </div>
-                  <div>
-                    <div className="text-base font-mono mb-1">EMAIL</div>
-                    <a href="mailto:hello@example.com" className="hover:text-[var(--accent)] transition-colors group text-lg">
-                      <span className="group-hover:underline">hello@example.com</span>
-                    </a>
-                  </div>
-                </motion.div>
+                {contactMethods.map((method, index) => (
+                  <motion.div 
+                    key={method.title}
+                    className="flex items-center"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 bg-[var(--background)]">
+                      {method.icon}
+                    </div>
+                    <div>
+                      <div className="text-base font-mono mb-1">{method.title.toUpperCase()}</div>
+                      <a href={method.link} className="hover:text-[var(--accent)] transition-colors group text-lg">
+                        <span className="group-hover:underline">{method.value}</span>
+                      </a>
+                    </div>
+                  </motion.div>
+                ))}
                 
                 <motion.div 
                   className="flex items-center"
@@ -150,7 +170,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="text-base font-mono mb-1">LOCATION</div>
-                    <div className="text-lg">Seattle, Washington</div>
+                    <div className="text-lg">Thessaloniki, Greece</div>
                   </div>
                 </motion.div>
               </div>
@@ -173,57 +193,81 @@ export default function Contact() {
               </h3>
               
               <div className="space-y-8">
-                <motion.a 
-                  href="https://github.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center group py-4 border-b-2 border-dashed border-[var(--foreground)] hover:border-[var(--accent)]"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
-                    <Github size={28} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-base font-mono text-[var(--accent)] mb-1">GITHUB</div>
-                    <div className="flex items-center group-hover:text-[var(--accent)] text-lg">
-                      github.com/username
-                      <ExternalLink size={16} className="ml-3 opacity-60 group-hover:opacity-100" />
-                    </div>
-                  </div>
-                </motion.a>
+                {socialLinks.map((socialLink, index) => {
+                  const Icon = socialLink.icon;
+                  return (
+                    <motion.a 
+                      key={socialLink.name}
+                      href={socialLink.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center group py-4 border-b-2 border-dashed border-[var(--foreground)] hover:border-[var(--accent)]"
+                      whileHover={{ x: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
+                        <Icon size={28} />
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-base font-mono text-[var(--accent)] mb-1">{socialLink.name.toUpperCase()}</div>
+                        <div className="flex items-center group-hover:text-[var(--accent)] text-lg">
+                          {socialLink.url.replace('https://', '')}
+                          <ExternalLink size={16} className="ml-3 opacity-60 group-hover:opacity-100" />
+                        </div>
+                      </div>
+                    </motion.a>
+                  );
+                })}
                 
-                <motion.a 
-                  href="https://linkedin.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center group py-4 border-b-2 border-dashed border-[var(--foreground)] hover:border-[var(--accent)]"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-14 h-14 flex items-center justify-center border-2 border-[var(--foreground)] mr-6 group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
-                    <Linkedin size={28} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-base font-mono text-[var(--accent)] mb-1">LINKEDIN</div>
-                    <div className="flex items-center group-hover:text-[var(--accent)] text-lg">
-                      linkedin.com/in/username
-                      <ExternalLink size={16} className="ml-3 opacity-60 group-hover:opacity-100" />
-                    </div>
-                  </div>
-                </motion.a>
-                
-                <motion.a 
-                  href="/resume.pdf" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center mt-10 brutalist-button group py-4 px-6 text-lg"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span>DOWNLOAD RESUME</span>
-                  <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={20} />
-                </motion.a>
+                {/* CV Dropdown Button */}
+                <div ref={cvButtonRef} className="relative mt-10">
+                  <motion.button 
+                    onClick={() => setCvDropdownOpen(!cvDropdownOpen)}
+                    className="inline-flex items-center brutalist-button group py-4 px-6 text-lg w-full justify-between"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="flex items-center">
+                      <span>DOWNLOAD CV</span>
+                      <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={20} />
+                    </span>
+                    <ChevronDown 
+                      className={`transition-transform duration-200 ${cvDropdownOpen ? 'rotate-180' : ''}`} 
+                      size={18} 
+                    />
+                  </motion.button>
+                  
+                  <AnimatePresence>
+                    {cvDropdownOpen && (
+                      <motion.div 
+                        className="absolute top-full left-0 right-0 mt-2 border-4 border-[var(--foreground)] bg-[var(--background)] z-30"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <a 
+                          href="/assets/cv/CV_Vaggelis_Kavouras_English.pdf" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-4 border-b-2 border-[var(--foreground)] hover:bg-[var(--accent-light)] transition-colors"
+                        >
+                          <span className="font-mono">ENGLISH</span>
+                          <Download size={18} />
+                        </a>
+                        <a 
+                          href="/assets/cv/CV_Vaggelis_Kavouras_Greek.pdf" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-4 hover:bg-[var(--accent-light)] transition-colors"
+                        >
+                          <span className="font-mono">GREEK</span>
+                          <Download size={18} />
+                        </a>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </motion.div>
           </motion.div>

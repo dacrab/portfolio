@@ -9,25 +9,7 @@ import Hero from "@/components/Hero/index";
 import LazySection from "@/components/LazySection";
 import ScrollIndicator from "@/components/ScrollIndicator";
 
-// Lazy load components with suspense and improved loading states
-const About = dynamic(() => import('@/components/About'), { 
-  ssr: false,
-  loading: () => <LoadingPlaceholder />
-});
-const Projects = dynamic(() => import('@/components/Projects'), { 
-  ssr: false,
-  loading: () => <LoadingPlaceholder />
-});
-const Experience = dynamic(() => import('@/components/Experience'), { 
-  ssr: false, 
-  loading: () => <LoadingPlaceholder />
-});
-const Contact = dynamic(() => import('@/components/Contact'), { 
-  ssr: false,
-  loading: () => <LoadingPlaceholder />
-});
-
-// Better loading placeholder with brutalist design
+// Loading placeholder with brutalist design
 function LoadingPlaceholder() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -39,30 +21,49 @@ function LoadingPlaceholder() {
   );
 }
 
+// Lazy load components
+const About = dynamic(() => import('@/components/About'), { 
+  ssr: false,
+  loading: () => <LoadingPlaceholder />
+});
+
+const Projects = dynamic(() => import('@/components/Projects'), { 
+  ssr: false,
+  loading: () => <LoadingPlaceholder />
+});
+
+const Experience = dynamic(() => import('@/components/Experience'), { 
+  ssr: false, 
+  loading: () => <LoadingPlaceholder />
+});
+
+const Contact = dynamic(() => import('@/components/Contact'), { 
+  ssr: false,
+  loading: () => <LoadingPlaceholder />
+});
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const mainRef = useRef<HTMLDivElement>(null);
   
-  // Handle initial loading
   useEffect(() => {
-    // Preload critical assets
-    setTimeout(() => {
+    // Simulate loading time for preloading critical assets
+    const timer = setTimeout(() => {
       setIsLoading(false);
+      
       // Enable smooth scrolling after initial load
       if (mainRef.current) {
         mainRef.current.classList.add('smooth-scroll');
       }
     }, 1500);
     
-    return () => {
-      // Clean up any event listeners or timers
-    };
+    return () => clearTimeout(timer);
   }, []);
   
   return (
     <>
       <AnimatePresence mode="wait">
-        {isLoading ? (
+        {isLoading && (
           <motion.div 
             key="loader"
             initial={{ opacity: 1 }}
@@ -98,7 +99,7 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-        ) : null}
+        )}
       </AnimatePresence>
 
       <main 
@@ -109,8 +110,6 @@ export default function Home() {
         <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:100px_100px] z-0 pointer-events-none"></div>
         
         <Navbar />
-        
-        {/* Scroll progress indicator */}
         <ScrollIndicator position="top" thickness={4} hideAtTop={true} color="var(--accent)" />
         
         {/* Main content */}
@@ -129,7 +128,7 @@ export default function Home() {
             <LazySection component={About} id="about" preloadMargin="600px" />
           </div>
           
-          {/* Projects section with sharper transition */}
+          {/* Projects section */}
           <div className="relative mb-24 md:mb-32">
             <div className="absolute top-0 left-0 w-full h-20 overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-40 bg-[var(--background)] transform -skew-y-3"></div>
@@ -144,7 +143,7 @@ export default function Home() {
             <LazySection component={Experience} id="experience" preloadMargin="600px" />
           </div>
           
-          {/* Contact section with sharper transition */}
+          {/* Contact section */}
           <div className="relative">
             <div className="absolute top-0 left-0 w-full h-20 overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-40 bg-[var(--background)] transform -skew-y-3"></div>

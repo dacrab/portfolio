@@ -15,7 +15,7 @@ export type SwissMotionType =
   | "parallax"
   | "pulse";
 
-type HoverEffect = "lift" | "glow" | "scale" | "rotate" | "none";
+export type HoverEffect = "lift" | "glow" | "scale" | "rotate" | "none";
 type TapEffect = "press" | "none";
 
 interface GridLayoutProps {
@@ -48,6 +48,20 @@ const EASING = {
   parallax: [0.08, 0.82, 0.17, 1]
 };
 
+// Mobile animation type mapping
+const MOBILE_TYPE_MAP: Partial<Record<SwissMotionType, SwissMotionType>> = {
+  parallax: "slide",
+  grid: "stagger",
+  rotate: "fade"
+};
+
+// Mobile hover effect mapping
+const MOBILE_HOVER_MAP: Partial<Record<HoverEffect, HoverEffect>> = {
+  lift: "scale",
+  rotate: "none",
+  glow: "scale"
+};
+
 export default function SwissMotion({
   children,
   type = "fade",
@@ -76,24 +90,18 @@ export default function SwissMotion({
     staggerChildren: isMobile && mobileOptimized ? Math.min(staggerChildren * 0.5, 0.05) : staggerChildren
   };
   
-  // Simplify animation type for mobile
-  const getEffectiveType = (): SwissMotionType => {
-    if (!isMobile || !mobileOptimized) return type;
-    
-    // Convert complex animations to simpler ones on mobile
-    const mobileTypeMap: Partial<Record<SwissMotionType, SwissMotionType>> = {
-      parallax: "slide",
-      grid: "stagger",
-      rotate: "fade"
-    };
-    
-    return mobileTypeMap[type] || type;
-  };
+  // Get effective animation type based on device
+  const effectiveType = shouldDisableAnimation 
+    ? "fade" 
+    : (isMobile && mobileOptimized ? MOBILE_TYPE_MAP[type] || type : type);
   
-  const effectiveType = shouldDisableAnimation ? "fade" : getEffectiveType();
-  
+  // Get effective hover effect for current device
+  const effectiveHoverEffect = isMobile 
+    ? MOBILE_HOVER_MAP[whileHover] || whileHover 
+    : whileHover;
+
   // Swiss style animation variants
-  const createVariants = (): Record<SwissMotionType, Variants> => ({
+  const variants: Record<SwissMotionType, Variants> = {
     fade: {
       hidden: { opacity: 0 },
       visible: { 
@@ -212,21 +220,6 @@ export default function SwissMotion({
         }
       }
     }
-  });
-
-  const variants = createVariants();
-
-  // Get effective hover effect for mobile
-  const getEffectiveHoverEffect = (): HoverEffect => {
-    if (!isMobile) return whileHover;
-    
-    const mobileHoverMap: Partial<Record<HoverEffect, HoverEffect>> = {
-      lift: "scale",
-      rotate: "none",
-      glow: "scale"
-    };
-    
-    return mobileHoverMap[whileHover] || whileHover;
   };
 
   // Swiss style hover variants
@@ -273,21 +266,25 @@ export default function SwissMotion({
       return {
         ...commonProps,
         custom: gridLayout,
-        variants: variants[effectiveType]
+        variants: variants[effectiveType],
+        whileHover: hoverVariants[effectiveHoverEffect],
+        whileTap: tapVariants[whileTap]
       };
     }
 
     if (effectiveType === "stagger") {
       return {
         ...commonProps,
-        variants: variants.stagger
+        variants: variants.stagger,
+        whileHover: hoverVariants[effectiveHoverEffect],
+        whileTap: tapVariants[whileTap]
       };
     }
 
     return {
       ...commonProps,
       variants: variants[effectiveType],
-      whileHover: hoverVariants[getEffectiveHoverEffect()],
+      whileHover: hoverVariants[effectiveHoverEffect],
       whileTap: tapVariants[whileTap]
     };
   };

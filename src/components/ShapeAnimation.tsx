@@ -58,9 +58,9 @@ export default function ShapeAnimation({
   
   // Get appropriate animation variant based on device
   const effectiveVariant = shouldDisableAnimation ? "none" : 
-    (isMobile && mobileOptimized) ? 
-      (variant === "path" ? "draw" : variant === "rotate" ? "pulse" : variant) : 
-      variant;
+    (isMobile && mobileOptimized && variant === "rotate") ? "pulse" : 
+    (isMobile && mobileOptimized && variant === "path") ? "draw" : 
+    variant;
   
   // Base transition configuration
   const baseTransition = {
@@ -141,10 +141,25 @@ export default function ShapeAnimation({
   
   // SVG shape renderer
   const renderSvgShape = (type: "line" | "diagonal" | "cross") => {
-    const pathTransition: Transition = {
-      pathLength: { duration: optimizedDuration, delay: optimizedDelay, ease: swissEaseCrisp },
-      opacity: { duration: optimizedDuration * 0.5, delay: optimizedDelay }
-    };
+    if (!isMounted || shouldDisableAnimation) {
+      return (
+        <svg
+          ref={ref}
+          width={shapeSize}
+          height={shapeSize}
+          viewBox="0 0 100 100"
+          className={`inline-block ${className}`}
+        >
+          <path
+            d={svgPaths[type]}
+            stroke={color}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    }
     
     return (
       <motion.svg
@@ -153,9 +168,9 @@ export default function ShapeAnimation({
         height={shapeSize}
         viewBox="0 0 100 100"
         className={`inline-block ${className}`}
-        style={{ willChange: shouldDisableAnimation ? "auto" : "transform" }}
-        initial={isMounted && !shouldDisableAnimation ? { opacity: 0 } : { opacity: 1 }}
-        animate={isMounted && !shouldDisableAnimation ? { opacity: 1 } : { opacity: 1 }}
+        style={{ willChange: "transform" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: optimizedDuration, delay: optimizedDelay }}
       >
         <motion.path
@@ -164,9 +179,12 @@ export default function ShapeAnimation({
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
-          initial={isMounted && !shouldDisableAnimation ? { pathLength: 0, opacity: 0 } : { pathLength: 1, opacity: 1 }}
-          animate={isMounted && !shouldDisableAnimation && isInView ? { pathLength: 1, opacity: 1 } : {}}
-          transition={pathTransition}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
+          transition={{
+            pathLength: { duration: optimizedDuration, delay: optimizedDelay, ease: swissEaseCrisp },
+            opacity: { duration: optimizedDuration * 0.5, delay: optimizedDelay }
+          }}
         />
       </motion.svg>
     );

@@ -3,72 +3,11 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { Github, Code } from "lucide-react";
+import { Github } from "lucide-react";
+import { ProjectData, DEFAULT_PROJECTS, getTagColor, TECHNOLOGIES, TECH_DESCRIPTIONS } from "./Projects/types";
 
-// Define project type
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  tags: string[];
-  githubUrl: string;
-  featured: boolean;
-}
-
-// Project data
-const PROJECTS: Project[] = [
-  {
-    id: 1,
-    title: "E-COMMERCE PLATFORM",
-    description: "A full-featured e-commerce platform with product management, cart functionality, user authentication, and payment processing.",
-    tags: ["Next.js", "TypeScript", "Stripe", "MongoDB", "Tailwind CSS"],
-    githubUrl: "https://github.com/username/ecommerce",
-    featured: true
-  },
-  {
-    id: 2,
-    title: "PORTFOLIO WEBSITE",
-    description: "A brutalist design portfolio website showcasing projects and skills with modern animations and responsive design.",
-    tags: ["React", "Framer Motion", "Tailwind CSS", "TypeScript"],
-    githubUrl: "https://github.com/username/portfolio",
-    featured: true
-  },
-  {
-    id: 3,
-    title: "TASK MANAGEMENT APP",
-    description: "A productivity application for managing tasks with features like kanban boards, reminders, and team collaboration.",
-    tags: ["React", "Redux", "Node.js", "Express", "PostgreSQL"],
-    githubUrl: "https://github.com/username/taskapp",
-    featured: false
-  },
-  {
-    id: 4,
-    title: "WEATHER DASHBOARD",
-    description: "Real-time weather data visualization with forecast predictions, location search, and interactive maps.",
-    tags: ["React", "APIs", "Chart.js", "CSS Modules"],
-    githubUrl: "https://github.com/username/weather",
-    featured: false
-  },
-  {
-    id: 5,
-    title: "BLOG PLATFORM",
-    description: "A modern blog with content management, user comments, categories, and markdown support.",
-    tags: ["Next.js", "GraphQL", "MongoDB", "AWS S3"],
-    githubUrl: "https://github.com/username/blog",
-    featured: false
-  },
-  {
-    id: 6,
-    title: "CHAT APPLICATION",
-    description: "Real-time messaging platform with private chats, group conversations, file sharing, and notifications.",
-    tags: ["React", "Socket.io", "Node.js", "Firebase", "Material UI"],
-    githubUrl: "https://github.com/username/chat",
-    featured: false
-  }
-];
-
-// Featured project card
-function FeaturedProject({ project }: { project: Project }) {
+// Featured project card - with brutalist style
+function FeaturedProject({ project }: { project: ProjectData }) {
   return (
     <div className="brutalist-card mb-24 p-8 md:p-10">
       <div className="relative mb-10">
@@ -79,10 +18,11 @@ function FeaturedProject({ project }: { project: Project }) {
       <p className="mb-10 text-lg">{project.description}</p>
       
       <div className="flex flex-wrap gap-3 mb-10">
-        {project.tags.map((tag: string) => (
+        {project.tags.map((tag) => (
           <span 
             key={tag} 
             className="brutalist-tag"
+            style={{ borderColor: getTagColor(tag) }}
           >
             {tag}
           </span>
@@ -90,14 +30,14 @@ function FeaturedProject({ project }: { project: Project }) {
       </div>
       
       <div className="flex justify-between items-center pt-6 border-t-2 border-[var(--foreground)]">
-        <div className="font-mono text-sm">OPEN SOURCE</div>
+        <div className="font-mono text-sm">WEBSITE</div>
         <Link 
-          href={project.githubUrl}
+          href={project.link}
           target="_blank" 
           rel="noopener noreferrer"
           className="hover:text-[var(--accent)] transition-colors flex items-center gap-3 group" 
         >
-          <span className="font-mono text-sm group-hover:underline">VIEW CODE</span>
+          <span className="font-mono text-sm group-hover:underline">VIEW WEBSITE</span>
           <Github size={20} />
         </Link>
       </div>
@@ -105,8 +45,8 @@ function FeaturedProject({ project }: { project: Project }) {
   );
 }
 
-// Regular project card
-function ProjectCard({ project }: { project: Project }) {
+// Regular project card - with brutalist style
+function ProjectCard({ project }: { project: ProjectData }) {
   return (
     <div className="brutalist-card h-full flex flex-col justify-between group p-8">
       <div>
@@ -118,10 +58,11 @@ function ProjectCard({ project }: { project: Project }) {
         <p className="mb-6 text-sm">{project.description}</p>
         
         <div className="flex flex-wrap gap-3 mb-6">
-          {project.tags.slice(0, 3).map((tag: string) => (
+          {project.tags.slice(0, 3).map((tag) => (
             <span 
               key={tag} 
               className="brutalist-tag text-xs"
+              style={{ borderColor: getTagColor(tag) }}
             >
               {tag}
             </span>
@@ -134,7 +75,7 @@ function ProjectCard({ project }: { project: Project }) {
       
       <div className="mt-6 pt-6 border-t-2 border-[var(--foreground)]">
         <Link 
-          href={project.githubUrl}
+          href={project.link}
           target="_blank" 
           rel="noopener noreferrer" 
           className="hover:text-[var(--accent)] transition-colors flex items-center gap-3 group"
@@ -150,10 +91,10 @@ function ProjectCard({ project }: { project: Project }) {
 export default function Projects() {
   const ref = useRef<HTMLElement>(null);
   
-  // Featured projects
-  const featuredProjects = PROJECTS.filter(project => project.featured);
-  // Regular projects
-  const regularProjects = PROJECTS.filter(project => !project.featured);
+  // Featured projects - first two projects
+  const featuredProjects = DEFAULT_PROJECTS.slice(0, 2);
+  // Regular projects - remaining projects
+  const regularProjects = DEFAULT_PROJECTS.slice(2);
   
   // Scroll-based animation
   const { scrollYProgress } = useScroll({
@@ -184,7 +125,7 @@ export default function Projects() {
       </div>
       
       <div className="brutalist-container relative z-10 pt-16">
-        {/* Section heading */}
+        {/* Section heading - brutalist style */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-24">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 md:mb-0 inline-flex items-center">
             <span className="text-[var(--accent)] mr-4">/</span>
@@ -203,19 +144,52 @@ export default function Projects() {
           ))}
         </motion.div>
         
-        {/* Regular projects grid */}
-        <motion.div style={{ y: y2, opacity }}>
+        {/* Technology descriptions section */}
+        <motion.div 
+          className="mb-32"
+          style={{ opacity }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h3 className="text-2xl font-bold mb-12 inline-flex items-center">
             <span className="w-6 h-1 bg-[var(--foreground)] mr-4"></span>
-            MORE PROJECTS
+            MY TECH STACK
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {regularProjects.map(project => (
-              <ProjectCard key={project.id} project={project} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {TECHNOLOGIES.map((tech, index) => (
+              <motion.div 
+                key={tech}
+                className="border-2 border-[var(--foreground)] p-6"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                <h4 className="text-xl font-bold mb-4">{tech}</h4>
+                <p>{TECH_DESCRIPTIONS[tech]}</p>
+              </motion.div>
             ))}
           </div>
         </motion.div>
+        
+        {/* Regular projects grid - only shown if there are more than 2 projects */}
+        {regularProjects.length > 0 && (
+          <motion.div style={{ y: y2, opacity }}>
+            <h3 className="text-2xl font-bold mb-12 inline-flex items-center">
+              <span className="w-6 h-1 bg-[var(--foreground)] mr-4"></span>
+              MORE PROJECTS
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {regularProjects.map(project => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

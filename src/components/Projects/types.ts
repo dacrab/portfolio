@@ -14,19 +14,24 @@ export interface ProjectData extends Project {
   language?: string;
 }
 
-export interface ProjectBaseProps {
-  project: Project;
-  isInView?: boolean;
-  delay?: number;
-  index?: number;
-  isActive?: boolean;
-  onHoverStart?: () => void;
-  onHoverEnd?: () => void;
-  isMobile?: boolean;
-}
-
 // Constants
-export const DEFAULT_PROJECTS: ProjectData[] = [];
+export const DEFAULT_PROJECTS: ProjectData[] = [
+  {
+    id: 1,
+    title: "ARGICON",
+    description: "A professional website for a technical construction company showcasing their services, projects portfolio, and expertise in infrastructure development with a modern, responsive design.",
+    tags: ["NextJS", "TypeScript", "Stripe", "MongoDB", "Tailwind CSS"],
+    link: "https://argicon.gr"
+  },
+  {
+    id: 2,
+    title: "DESIGN_ DASH",
+    description: "A comprehensive digital platform for a technical construction firm featuring project galleries, technical specifications, and service offerings with an emphasis on engineering excellence",
+    tags: ["NextJS", "Framer Motion", "Tailwind CSS", "TypeScript"],
+    link: "https://designdash.gr"
+  }
+];
+
 export const TECHNOLOGIES = [
   "React",
   "Next.js",
@@ -55,12 +60,17 @@ export const getTagColor = (tag: string): string => {
     "CSS": "#563d7c",
     "React": "#61dafb",
     "Next.js": "#000000",
+    "NextJS": "#000000",
     "Node.js": "#339933",
     "Java": "#b07219",
     "Go": "#00ADD8",
     "Rust": "#dea584",
     "PHP": "#4F5D95",
-    "Ruby": "#701516"
+    "Ruby": "#701516",
+    "Tailwind CSS": "#06B6D4",
+    "MongoDB": "#47A248",
+    "Stripe": "#008CDD",
+    "Framer Motion": "#0055FF"
   };
   return tag ? colorMap[tag] || "var(--accent)" : "var(--accent)";
 };

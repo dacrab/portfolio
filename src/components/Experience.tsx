@@ -3,72 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Calendar, MapPin, ExternalLink, Briefcase, GraduationCap } from "lucide-react";
-
-// Work experience data
-const EXPERIENCE = [
-  {
-    id: 1,
-    company: "TECH INNOVATIONS INC",
-    title: "Senior Frontend Developer",
-    period: "2021 - Present",
-    location: "New York, NY",
-    website: "https://example.com/techinnovations",
-    description: "Lead development of multiple client projects using React, Next.js, and TypeScript. Implemented CI/CD pipelines and improved code quality standards.",
-    highlights: [
-      "Developed a component library used across 15+ client projects",
-      "Improved app performance by 45% through code optimization",
-      "Mentored junior developers and conducted technical interviews"
-    ]
-  },
-  {
-    id: 2,
-    company: "WEBCRAFT SOLUTIONS",
-    title: "Full Stack Developer",
-    period: "2019 - 2021",
-    location: "Boston, MA",
-    website: "https://example.com/webcraft",
-    description: "Worked on end-to-end development of web applications using MERN stack. Designed and implemented RESTful APIs and database architectures.",
-    highlights: [
-      "Built an e-commerce platform serving 10k+ monthly users",
-      "Reduced database query times by 60% through optimization",
-      "Integrated payment processing systems and authentication"
-    ]
-  },
-  {
-    id: 3,
-    company: "DIGITAL SPHERE",
-    title: "Junior Web Developer",
-    period: "2017 - 2019",
-    location: "Seattle, WA",
-    website: "https://example.com/digitalsphere",
-    description: "Started as an intern and grew into a junior developer role. Focused on frontend implementations with HTML, CSS, and JavaScript.",
-    highlights: [
-      "Created responsive designs for 20+ client websites",
-      "Assisted in migrating legacy applications to modern frameworks",
-      "Developed custom WordPress themes and plugins"
-    ]
-  }
-];
-
-// Education data
-const EDUCATION = [
-  {
-    id: 1,
-    institution: "UNIVERSITY OF TECHNOLOGY",
-    degree: "Bachelor of Science in Computer Science",
-    period: "2013 - 2017",
-    location: "San Francisco, CA",
-    description: "Focused on software engineering, web technologies, and data structures. Graduated with honors."
-  },
-  {
-    id: 2,
-    institution: "TECH BOOTCAMP",
-    degree: "Full Stack Web Development",
-    period: "2017",
-    location: "Online",
-    description: "Intensive 12-week program covering modern web development technologies and practices."
-  }
-];
+import { EXPERIENCES, ExperienceItem, SKILL_PROGRESSIONS, EDUCATION, EducationItem } from "./Experience/types";
 
 export default function Experience() {
   const ref = useRef<HTMLElement>(null);
@@ -175,9 +110,28 @@ export default function Experience() {
                 My professional journey spans multiple roles focused on web development, from junior positions to senior leadership.
               </p>
               <div className="brutalist-divider h-1"></div>
-              <p className="text-base mt-10">
-                Swipe to see key responsibilities and achievements in each role.
-              </p>
+              
+              {/* Skill Progressions */}
+              <div className="mt-10">
+                <h4 className="text-lg font-bold mb-6">KEY SKILLS</h4>
+                {SKILL_PROGRESSIONS.map((skill, index) => (
+                  <div key={index} className="mb-5 last:mb-0">
+                    <div className="flex justify-between mb-2">
+                      <span className="font-medium">{skill.name}</span>
+                      <span>{skill.percentage}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-[var(--muted)]">
+                      <motion.div 
+                        className="h-full bg-[var(--accent)]"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${skill.percentage}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 0.2 * index }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
               
               {/* Extra brutalist element */}
               <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-[var(--foreground)] hidden md:block"></div>
@@ -192,7 +146,7 @@ export default function Experience() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {EXPERIENCE.map((job, index) => (
+              {EXPERIENCES.map((job: ExperienceItem, index) => (
                 <motion.div 
                   key={job.id} 
                   className="brutalist-card relative border-4 p-10 md:p-14"
@@ -209,17 +163,8 @@ export default function Experience() {
                   <div className="mb-10">
                     <div className="flex justify-between items-start flex-wrap gap-6">
                       <h3 className="text-2xl md:text-3xl font-bold">{job.company}</h3>
-                      <a 
-                        href={job.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="hover:text-[var(--accent)] transition-colors flex items-center text-base group px-4 py-3 border-2 border-[var(--foreground)]"
-                      >
-                        <span className="group-hover:underline mr-3">Visit</span>
-                        <ExternalLink size={16} className="opacity-70 group-hover:opacity-100" />
-                      </a>
                     </div>
-                    <h4 className="text-xl font-medium text-[var(--accent)] mt-3">{job.title}</h4>
+                    <h4 className="text-xl font-medium text-[var(--accent)] mt-3">{job.role}</h4>
                   </div>
                   
                   {/* Meta information */}
@@ -228,36 +173,35 @@ export default function Experience() {
                       <Calendar size={20} className="mr-3 opacity-70" />
                       {job.period}
                     </div>
-                    <div className="flex items-center">
-                      <MapPin size={20} className="mr-3 opacity-70" />
-                      {job.location}
-                    </div>
                   </div>
                   
                   {/* Description */}
-                  <p className="mb-12 text-lg leading-relaxed">{job.description}</p>
+                  <div className="mb-12">
+                    {job.description.map((paragraph, index) => (
+                      <p key={index} className="mb-4 last:mb-0 text-lg leading-relaxed">{paragraph}</p>
+                    ))}
+                  </div>
                   
-                  {/* Highlights */}
+                  {/* Skills */}
                   <div>
                     <div className="font-mono text-base mb-6 inline-flex items-center">
                       <span className="inline-block w-5 h-5 bg-[var(--accent)] mr-4"></span>
-                      KEY ACHIEVEMENTS:
+                      TECHNOLOGIES:
                     </div>
-                    <ul className="space-y-5 pl-3">
-                      {job.highlights.map((highlight, i) => (
-                        <motion.li 
-                          key={i} 
-                          className="flex items-start"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
+                    <div className="flex flex-wrap gap-3">
+                      {job.skills.map((skill, i) => (
+                        <motion.span
+                          key={i}
+                          className="inline-block px-3 py-1 border-2 border-[var(--foreground)] text-sm"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
-                          transition={{ duration: 0.3, delay: 0.1 * i }}
+                          transition={{ duration: 0.3, delay: 0.05 * i }}
                         >
-                          <span className="inline-block w-3 h-3 bg-[var(--foreground)] mt-2 mr-4 flex-shrink-0"></span>
-                          <span>{highlight}</span>
-                        </motion.li>
+                          {skill}
+                        </motion.span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -284,7 +228,7 @@ export default function Experience() {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            {EDUCATION.map((edu, index) => (
+            {EDUCATION.map((edu: EducationItem, index) => (
               <motion.div 
                 key={edu.id}
                 className="brutalist-card p-10 border-4"

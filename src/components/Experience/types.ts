@@ -10,6 +10,15 @@ export interface ExperienceItem {
   skills: string[];
 }
 
+export interface EducationItem {
+  id: number;
+  institution: string;
+  degree: string;
+  period: string;
+  location: string;
+  description: string;
+}
+
 export interface TimelineEntryProps {
   position: 'left' | 'right';
   desktopPosition?: 'left' | 'right';
@@ -45,6 +54,25 @@ export const EXPERIENCES: ExperienceItem[] = [
       "Applied version control with Git and followed collaborative development workflows"
     ],
     skills: ["Next.js", "React", "TypeScript", "TailwindCSS", "WordPress", "Supabase", "Git", "Framer Motion", "i18n", "Responsive Design"]
+  }
+];
+
+export const EDUCATION: EducationItem[] = [
+  {
+    id: 1,
+    institution: "UNIVERSITY OF TECHNOLOGY",
+    degree: "Bachelor of Science in Computer Science",
+    period: "2013 - 2017",
+    location: "San Francisco, CA",
+    description: "Focused on software engineering, web technologies, and data structures. Graduated with honors."
+  },
+  {
+    id: 2,
+    institution: "TECH BOOTCAMP",
+    degree: "Full Stack Web Development",
+    period: "2017",
+    location: "Online",
+    description: "Intensive 12-week program covering modern web development technologies and practices."
   }
 ];
 
