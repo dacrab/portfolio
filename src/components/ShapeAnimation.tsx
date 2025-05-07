@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useInView, Transition } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 export type ShapeType = "square" | "circle" | "triangle" | "line" | "diagonal" | "cross";

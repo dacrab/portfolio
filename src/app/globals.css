@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  /* Brutalist color palette */
-  --background: #ffffff;
-  --foreground: #000000;
-  --accent: #ff2d20;
-  --accent-light: #ff5a4f;
-  --accent-dark: #cc1e14;
-  --accent-secondary: #2563eb;
-  --accent-tertiary: #fbbf24;
-  --muted: #6b7280;
-  --card: #f2f2f2;
-  --card-hover: #e5e5e5;
-  --border: #000000;
+  /* Updated Brutalist color palette - more abstract and high contrast */
+  --background: #f7f4f0;
+  --foreground: #0d0d0d;
+  --accent: #e63946;
+  --accent-light: #ff6b6b;
+  --accent-dark: #b32534;
+  --accent-secondary: #2d3142;
+  --accent-tertiary: #fcbf49;
+  --muted: #767676;
+  --card: #ffffff;
+  --card-hover: #efebe5;
+  --border: #0d0d0d;
   
   /* RGB variables for rgba() functions */
-  --background-rgb: 255, 255, 255;
-  --foreground-rgb: 0, 0, 0;
-  --card-rgb: 242, 242, 242;
-  --border-rgb: 0, 0, 0;
-  --accent-rgb: 255, 45, 32;
-  --accent-light-rgb: 255, 90, 79;
-  --accent-dark-rgb: 204, 30, 20;
-  --accent-secondary-rgb: 37, 99, 235;
-  --accent-tertiary-rgb: 251, 191, 36;
+  --background-rgb: 247, 244, 240;
+  --foreground-rgb: 13, 13, 13;
+  --card-rgb: 255, 255, 255;
+  --border-rgb: 13, 13, 13;
+  --accent-rgb: 230, 57, 70;
+  --accent-light-rgb: 255, 107, 107;
+  --accent-dark-rgb: 179, 37, 52;
+  --accent-secondary-rgb: 45, 49, 66;
+  --accent-tertiary-rgb: 252, 191, 73;
   
   /* Brutalist grid system variables */
   --grid-unit: 8px;
@@ -40,7 +40,7 @@
   --spacing-3xl: 10rem;    /* 160px */
   
   /* Skill card background - light theme */
-  --skill-card-bg: #f2f2f2;
+  --skill-card-bg: #ffffff;
 }
 
 @theme inline {
@@ -57,31 +57,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #111111;
-    --foreground: #ffffff;
-    --accent: #ff2d20;
-    --accent-light: #ff5a4f;
-    --accent-dark: #cc1e14;
-    --accent-secondary: #3b82f6;
-    --accent-tertiary: #fbbf24;
-    --muted: #9ca3af;
-    --card: #1a1a1a;
-    --card-hover: #222222;
-    --border: #ffffff;
+    --background: #151515;
+    --foreground: #f7f4f0;
+    --accent: #ff4d5a;
+    --accent-light: #ff6b6b;
+    --accent-dark: #b32534;
+    --accent-secondary: #4e5166;
+    --accent-tertiary: #fcbf49;
+    --muted: #a8a8a8;
+    --card: #232323;
+    --card-hover: #2d2d2d;
+    --border: #f7f4f0;
     
     /* RGB variables for rgba() functions */
-    --background-rgb: 17, 17, 17;
-    --foreground-rgb: 255, 255, 255;
-    --card-rgb: 26, 26, 26;
-    --border-rgb: 255, 255, 255;
-    --accent-rgb: 255, 45, 32;
-    --accent-light-rgb: 255, 90, 79;
-    --accent-dark-rgb: 204, 30, 20;
-    --accent-secondary-rgb: 59, 130, 246;
-    --accent-tertiary-rgb: 251, 191, 36;
+    --background-rgb: 21, 21, 21;
+    --foreground-rgb: 247, 244, 240;
+    --card-rgb: 35, 35, 35;
+    --border-rgb: 247, 244, 240;
+    --accent-rgb: 255, 77, 90;
+    --accent-light-rgb: 255, 107, 107;
+    --accent-dark-rgb: 179, 37, 52;
+    --accent-secondary-rgb: 78, 81, 102;
+    --accent-tertiary-rgb: 252, 191, 73;
     
     /* Skill card background - dark theme */
-    --skill-card-bg: #1a1a1a;
+    --skill-card-bg: #232323;
   }
 }
 
@@ -95,6 +95,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  position: relative;
 }
 
 /* Make sure we get a clean slate */
@@ -114,32 +115,32 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 5rem;
-  line-height: 1;
+  line-height: 0.9;
 }
 
 h2 {
   font-size: 3rem;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 h3 {
   font-size: 2rem;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 h4 {
   font-size: 1.5rem;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 h5 {
   font-size: 1.25rem;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 h6 {
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 a {
@@ -169,7 +170,7 @@ button {
 /* Container */
 .container {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }

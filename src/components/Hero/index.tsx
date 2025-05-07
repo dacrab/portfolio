@@ -2,17 +2,27 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowDown, Download, ChevronDown } from "lucide-react";
+import { ArrowDown, Download, ChevronDown, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { SKILLS_BY_CATEGORY } from "../About/types";
 import Image from "next/image";
-import { SKILLS_BY_CATEGORY, ADAPTIVE_COLOR_ICONS } from "../About/types";
 
 // Define tech stack constants
-const TECH_STACK = ["NEXT.JS", "TYPESCRIPT", "TAILWIND", "FRAMER MOTION"];
+const TECH_STACK = ["NEXT.JS", "TYPESCRIPT", "TAILWIND", "FRAMER MOTION"] as const;
+
+// Define the type for tech stack items
+type TechStackItem = typeof TECH_STACK[number];
+
+// Tech stack mapping to skill names with proper typing
+const TECH_MAPPING: Record<TechStackItem, string> = {
+  "NEXT.JS": "next.js",
+  "TYPESCRIPT": "typescript",
+  "TAILWIND": "tailwind css",
+  "FRAMER MOTION": "framer motion"
+};
 
 /**
  * Main Hero component for the portfolio landing section
- * Modern brutalist design with dynamic animations
  */
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -20,7 +30,7 @@ export default function Hero() {
   const [cvDropdownOpen, setCvDropdownOpen] = useState(false);
   
   // Get tech stack icons from skills data
-  const techIcons = getTechStackIcons();
+  const techIcons = useTechStackIcons();
   
   // Parallax effect
   const { scrollYProgress } = useScroll({
@@ -30,20 +40,18 @@ export default function Hero() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.cv-dropdown') && cvDropdownOpen) {
+      if (!(event.target as HTMLElement).closest('.cv-dropdown') && cvDropdownOpen) {
         setCvDropdownOpen(false);
       }
     };
     
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [cvDropdownOpen]);
   
   // Text scramble effect
@@ -55,13 +63,10 @@ export default function Hero() {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
     let interval: NodeJS.Timeout | null = null;
-    let iteration = 0;
     
     const scramble = () => {
-      if (!text) return;
-      
+      let iteration = 0;
       clearInterval(interval!);
-      iteration = 0;
       
       interval = setInterval(() => {
         text.innerText = originalText
@@ -100,69 +105,76 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-32 pb-24"
     >
-      {/* Background elements */}
-      <div className="brutalist-noise opacity-30"></div>
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none"></div>
+      {/* Abstract background elements */}
+      <div className="brutalist-noise opacity-20"></div>
       
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-12 h-64 bg-[var(--accent)] hidden md:block"></div>
-      <div className="absolute bottom-0 left-0 w-12 h-64 bg-[var(--foreground)] hidden md:block"></div>
-      <div className="absolute top-0 left-0 w-24 h-4 bg-[var(--foreground)] hidden md:block"></div>
-      <div className="absolute top-0 left-0 w-4 h-24 bg-[var(--foreground)] hidden md:block"></div>
-      <div className="absolute bottom-0 right-0 w-24 h-4 bg-[var(--accent)] hidden md:block"></div>
-      <div className="absolute bottom-0 right-0 w-4 h-24 bg-[var(--accent)] hidden md:block"></div>
+      {/* Abstract decorative elements */}
+      <div className="abstract-circle top-[10%] right-[15%] hidden lg:block"></div>
+      <div className="abstract-square bottom-[20%] left-[8%] hidden lg:block"></div>
+      <div className="abstract-line top-[30%] left-[20%] transform rotate-45 hidden lg:block"></div>
+      <div className="abstract-line bottom-[25%] right-[30%] transform -rotate-12 hidden lg:block"></div>
       
+      {/* Main content container */}
       <div className="brutalist-container relative z-10 px-6 md:px-10">
         <motion.div 
           className="flex flex-col max-w-6xl mx-auto"
-          style={{ y, opacity }}
+          style={{ y, opacity, scale }}
         >
-          {/* Portfolio tag */}
+          {/* Portfolio tag with enhanced styling */}
           <motion.div 
-            className="mb-8 md:mb-12"
+            className="mb-10 md:mb-14"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
           >
-            <div className="flex items-center gap-3">
-              <div className="h-1 w-16 bg-[var(--accent)]"></div>
-              <div className="brutalist-tag bg-[var(--accent)] text-[var(--background)] py-3 px-5 text-lg">PORTFOLIO</div>
-              <div className="brutalist-tag py-3 px-5 text-lg">WEB DEVELOPER</div>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="h-2 w-20 bg-[var(--accent)]"></div>
+              <div className="brutalist-tag bg-[var(--accent)] text-[var(--accent)] py-3 px-6 text-lg">PORTFOLIO</div>
+              <div className="brutalist-tag py-3 px-6 text-lg">WEB DEVELOPER</div>
             </div>
           </motion.div>
           
-          {/* Main heading */}
+          {/* Abstract decorative element */}
+          <motion.div
+            className="absolute -left-4 md:left-0 top-32 w-10 h-40 border-r-4 border-t-4 border-[var(--accent-secondary)] opacity-40 hidden md:block"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 0.4, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          />
+          
+          {/* Main heading with enhanced typography */}
           <motion.h1 
             ref={textRef}
-            className="text-5xl md:text-7xl lg:text-9xl font-bold mb-8 md:mb-12 brutalist-title tracking-tighter leading-[1.1]"
+            className="text-6xl md:text-8xl lg:text-9xl font-bold mb-10 md:mb-14 brutalist-title tracking-tighter leading-[0.9]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
           >
             CRAFTING<br className="hidden md:block" /> DIGITAL<br className="md:hidden" /> EXPERIENCES
           </motion.h1>
           
-          {/* Description */}
+          {/* Description with enhanced styling */}
           <motion.div 
-            className="mb-12 md:mb-16 flex items-center max-w-3xl"
+            className="mb-14 md:mb-16 flex items-center max-w-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
           >
-            <p className="text-xl md:text-3xl lg:text-4xl font-medium pr-1 leading-relaxed">
+            <div className="text-xl md:text-3xl lg:text-4xl font-medium pr-1 leading-relaxed relative">
+              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-[var(--accent)] md:block hidden"></div>
               Full-stack developer creating modern web solutions with a focus on <span className="text-[var(--accent)]">design</span> and <span className="text-[var(--accent)]">performance</span>
-            </p>
-            <span className="brutalist-cursor-block mt-1 h-8 w-5"></span>
+              <span className="brutalist-cursor-block mt-1 h-8 w-4"></span>
+            </div>
           </motion.div>
           
-          {/* Tech stack */}
+          {/* Tech stack grid with enhanced styling */}
           <motion.div 
             className="mb-16 md:mb-20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
           >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {TECH_STACK.map((tech, index) => (
                 <TechItem 
                   key={tech}
@@ -174,12 +186,12 @@ export default function Hero() {
             </div>
           </motion.div>
           
-          {/* CTA Buttons */}
+          {/* CTA Buttons with enhanced styling */}
           <motion.div 
             className="flex flex-wrap gap-6 md:gap-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: [0.23, 1, 0.32, 1] }}
           >
             <Link href="#projects">
               <motion.button 
@@ -191,7 +203,7 @@ export default function Hero() {
               </motion.button>
             </Link>
             
-            {/* CV Dropdown */}
+            {/* CV Dropdown with enhanced styling */}
             <div className="cv-dropdown relative">
               <motion.button 
                 className="brutalist-button group text-lg px-8 py-4 flex items-center"
@@ -209,17 +221,17 @@ export default function Hero() {
               <AnimatePresence>
                 {cvDropdownOpen && (
                   <motion.div 
-                    className="absolute top-full left-0 right-0 mt-2 border-2 border-[var(--foreground)] bg-[var(--background)] z-50"
+                    className="absolute top-full left-0 right-0 mt-2 border-3 border-[var(--foreground)] bg-[var(--background)] z-50"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3 }}
                   >
                     <a 
                       href="/assets/cv/CV_Vaggelis_Kavouras_English.pdf" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between p-4 border-b-2 border-[var(--foreground)] hover:bg-[var(--accent-light)] transition-colors"
+                      className="flex items-center justify-between p-4 border-b-3 border-[var(--foreground)] hover:bg-[var(--accent-light)] transition-colors"
                     >
                       <span className="font-mono">ENGLISH</span>
                       <Download size={18} />
@@ -239,9 +251,9 @@ export default function Hero() {
             </div>
           </motion.div>
           
-          {/* Decorative element */}
+          {/* Decorative elements */}
           <motion.div 
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 w-6 h-48 border-4 border-[var(--accent)] hidden xl:block"
+            className="absolute right-0 md:-right-10 top-1/3 transform -translate-y-1/2 w-8 h-64 border-4 border-[var(--accent)] hidden xl:block"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
@@ -250,88 +262,111 @@ export default function Hero() {
       </div>
       
       {/* Scroll indicator */}
-      <motion.div 
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
+      <motion.div
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 1.2 }}
       >
-        <div className="text-sm font-mono tracking-widest mb-3">SCROLL</div>
-        <motion.div 
-          className="w-8 h-12 rounded-none border-2 border-[var(--foreground)] flex justify-center"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
-        >
-          <motion.div 
-            className="w-2 h-2 bg-[var(--accent)] mt-2"
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
-          />
-        </motion.div>
+        <span className="text-xs uppercase tracking-widest mb-2 font-mono">Scroll</span>
+        <motion.div
+          className="w-1 h-10 bg-[var(--foreground)] relative"
+          animate={{
+            scaleY: [0.3, 1, 0.3],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
       </motion.div>
     </section>
   );
 }
 
-// Tech item component
-function TechItem({ tech, iconInfo, index }: { tech: string, iconInfo?: { icon: string, url: string }, index: number }) {
-  const isAdaptiveColor = ADAPTIVE_COLOR_ICONS.includes(
-    tech === "NEXT.JS" ? "Next.js" : tech.charAt(0) + tech.slice(1).toLowerCase()
-  );
+/**
+ * Tech Item Card Component
+ */
+function TechItem({ tech, iconInfo, index }: { 
+  tech: TechStackItem, 
+  iconInfo?: { icon: string, url: string }, 
+  index: number 
+}) {
+  const delay = 0.1 + index * 0.1;
+  const isAdaptiveColor = iconInfo?.icon && iconInfo.icon.includes("/000000/FFFFFF");
   
   return (
-    <motion.a
-      href={iconInfo?.url || "#"}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="brutalist-tech-item group"
+    <motion.div
+      className="brutalist-box flex items-center p-4 md:p-5 group"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-      whileHover={{ y: -5 }}
+      transition={{ duration: 0.6, delay }}
+      whileHover={{ translateY: -5 }}
     >
-      <div className="border-2 border-[var(--foreground)] h-full flex flex-col">
-        <div className="p-4 flex items-center justify-center border-b-2 border-[var(--foreground)] relative overflow-hidden">
-          {iconInfo?.icon ? (
-            <div className={`w-12 h-12 flex items-center justify-center bg-[var(--background)] ${isAdaptiveColor ? 'invert dark:invert-0' : ''} transition-transform group-hover:scale-110`}>
-              <Image
-                src={iconInfo.icon}
-                alt={tech}
-                width={28}
-                height={28}
-                className="transition-transform"
-              />
-            </div>
-          ) : (
-            <div className="w-12 h-12 bg-[var(--accent)] opacity-20"></div>
-          )}
-          <div className="absolute top-0 left-0 w-2 h-2 bg-[var(--accent)]"></div>
-          <div className="absolute bottom-0 right-0 w-2 h-2 bg-[var(--accent)]"></div>
-        </div>
-        <div className="p-3 font-mono text-sm tracking-wide font-medium text-center group-hover:bg-[var(--foreground)] group-hover:text-[var(--background)] transition-colors">
-          {tech}
-        </div>
+      <div className="flex items-center w-full">
+        {iconInfo && (
+          <div className={`w-8 h-8 flex items-center justify-center mr-3 text-xl bg-[var(--foreground)] text-[var(--background)] ${isAdaptiveColor ? 'invert dark:invert-0' : ''}`}>
+            <Image 
+              src={iconInfo.icon} 
+              alt={tech} 
+              width={20} 
+              height={20}
+              className="w-5 h-5" 
+            />
+          </div>
+        )}
+        {iconInfo ? (
+          <Link 
+            href={iconInfo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-sm md:text-base font-bold flex items-center group-hover:text-[var(--accent)] transition-colors"
+          >
+            {tech}
+            <ArrowUpRight className="ml-1 w-3 h-3 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+          </Link>
+        ) : (
+          <div className="font-mono text-sm md:text-base font-bold">
+            {tech}
+          </div>
+        )}
       </div>
-    </motion.a>
+    </motion.div>
   );
 }
 
-// Helper function to get tech stack icons
-function getTechStackIcons() {
-  const techIcons: Record<string, { icon: string, url: string }> = {};
+/**
+ * Custom hook to get tech stack icons from skills data
+ */
+function useTechStackIcons() {
+  const [techIcons, setTechIcons] = useState<Record<TechStackItem, { icon: string, url: string }>>({} as Record<TechStackItem, { icon: string, url: string }>);
   
-  // Flatten all skills from categories and find matching tech stack items
-  Object.values(SKILLS_BY_CATEGORY).forEach(category => {
-    category.forEach(skill => {
-      const upperName = skill.name.toUpperCase();
+  useEffect(() => {
+    // Get all skills from all categories
+    const allSkills = Object.values(SKILLS_BY_CATEGORY).flat();
+    
+    // Create normalized skill map for easier lookup
+    const skillMap = allSkills.reduce((map, skill) => {
+      map[skill.name.toLowerCase()] = skill;
+      return map;
+    }, {} as Record<string, typeof allSkills[0]>);
+    
+    // Map tech stack items to their corresponding skills
+    const icons = TECH_STACK.reduce((result, tech) => {
+      const skillKey = TECH_MAPPING[tech];
+      const skill = skillKey && skillMap[skillKey];
       
-      if (TECH_STACK.includes(upperName)) {
-        techIcons[upperName] = { icon: skill.icon, url: skill.url };
-      } else if (upperName === "TAILWIND CSS" && TECH_STACK.includes("TAILWIND")) {
-        techIcons["TAILWIND"] = { icon: skill.icon, url: skill.url };
+      if (skill) {
+        result[tech] = { icon: skill.icon, url: skill.url };
       }
-    });
-  });
+      
+      return result;
+    }, {} as Record<TechStackItem, { icon: string, url: string }>);
+    
+    setTechIcons(icons);
+  }, []);
   
   return techIcons;
 }

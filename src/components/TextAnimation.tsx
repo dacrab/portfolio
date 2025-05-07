@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, createElement } from "react";
-import { motion, useInView, Variants } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Define interface for Navigator with deviceMemory property

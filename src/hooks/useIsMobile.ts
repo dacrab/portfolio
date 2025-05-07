@@ -1,45 +1,39 @@
 import { useState, useEffect } from 'react';
 
 /**
- * A hook that detects if the current device is a mobile device
- * @param breakpoint - Optional custom breakpoint (default: 768px)
+ * Custom hook to detect if the current device is mobile
+ * Uses both user agent detection and screen width to determine if mobile
  * @returns boolean indicating if the current device is mobile
  */
-export function useIsMobile(breakpoint: number = 768): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
+export function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+  
   useEffect(() => {
-    // Handle SSR - only run on the client
+    // Only run on client
     if (typeof window === 'undefined') return;
     
-    // Check initial state
-    const checkMobile = () => {
-      const width = window.innerWidth;
+    // Check if the device is mobile based on user agent
+    const checkIfMobile = () => {
       const userAgent = navigator.userAgent;
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      const isMobileDevice = mobileRegex.test(userAgent);
       
-      // Check width and common mobile userAgent patterns
-      const isMobileWidth = width < breakpoint;
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+      // Also consider small screen sizes as mobile
+      const isMobileWidth = window.innerWidth < 768;
       
-      setIsMobile(isMobileWidth || isMobileDevice);
-    };
-
-    // Check immediately
-    checkMobile();
-    
-    // Simple debounce function for resize events
-    let timeout: NodeJS.Timeout;
-    const handleResize = () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(checkMobile, 150); // Debounce for 150ms
+      setIsMobile(isMobileDevice || isMobileWidth);
     };
     
-    window.addEventListener('resize', handleResize);
+    // Check initially
+    checkIfMobile();
+    
+    // Add resize listener to update on orientation change or window resize
+    window.addEventListener('resize', checkIfMobile);
+    
     return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timeout);
+      window.removeEventListener('resize', checkIfMobile);
     };
-  }, [breakpoint]);
-
+  }, []);
+  
   return isMobile;
 } 

@@ -1,39 +1,57 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 /**
- * Custom hook to lazily load components when they approach the viewport
- * @param rootMargin Distance from the viewport to start loading (default: "200px")
- * @returns An object with a ref to attach to the container element and a boolean indicating if the component should be loaded
+ * Custom hook to handle lazy loading of sections
+ * Uses IntersectionObserver to detect when a section is about to enter the viewport
+ * @param preloadMargin - Distance from the viewport to start loading (default: 300px)
+ * @returns An object with the container ref and whether the section should load
  */
-export function useLazyLoadSection(rootMargin = "200px") {
-  const [shouldLoad, setShouldLoad] = useState(false);
+export function useLazyLoadSection(preloadMargin: string = '300px') {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
-    if (!containerRef.current || shouldLoad) return;
+    // Only run on client
+    if (typeof window === 'undefined') return;
+    
+    const currentRef = containerRef.current;
+    if (!currentRef) return;
 
+    // If IntersectionObserver is not supported, load immediately
+    if (!('IntersectionObserver' in window)) {
+      setShouldLoad(true);
+      return;
+    }
+
+    // Create observer with options
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When the section is approaching the viewport
-        if (entry.isIntersecting) {
+      (entries) => {
+        // If the element is about to enter the viewport, load it
+        if (entries[0].isIntersecting) {
           setShouldLoad(true);
+          // Once loaded, stop observing
           observer.disconnect();
         }
       },
       {
-        rootMargin, // Start loading when element is this distance from viewport
-        threshold: 0, // Trigger as soon as any part is visible
+        rootMargin: `${preloadMargin} 0px`,
+        threshold: 0,
       }
     );
 
-    observer.observe(containerRef.current);
+    // Start observing the container
+    observer.observe(currentRef);
 
+    // Cleanup on unmount
     return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
       observer.disconnect();
     };
-  }, [shouldLoad, rootMargin]);
+  }, [preloadMargin]);
 
   return { containerRef, shouldLoad };
 } 
