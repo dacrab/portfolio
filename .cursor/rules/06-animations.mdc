@@ -1,26 +1,34 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Animations Guide
 
-This portfolio uses several animation systems to create engaging visual effects.
+This portfolio uses modern, subtle animations to enhance the user experience without overwhelming the interface.
 
 ## Animation Components
-- [src/components/TextAnimation.tsx](mdc:src/components/TextAnimation.tsx) - Text animation components
-- [src/components/ShapeAnimation.tsx](mdc:src/components/ShapeAnimation.tsx) - SVG shape animations
-- [src/components/SwissMotion.tsx](mdc:src/components/SwissMotion.tsx) - Swiss design-inspired motion
-- [src/components/ScrollReveal.tsx](mdc:src/components/ScrollReveal.tsx) - Scroll-triggered animations
-- [src/components/ParallaxLayer.tsx](mdc:src/components/ParallaxLayer.tsx) - Parallax scrolling effects
-- [src/components/StaggerItem.tsx](mdc:src/components/StaggerItem.tsx) - Staggered animation sequences
+- [src/components/TextAnimation.tsx](mdc:src/components/TextAnimation.tsx) - Subtle text animations with clean transitions
+- [src/components/ShapeAnimation.tsx](mdc:src/components/ShapeAnimation.tsx) - Minimalist shape animations
+- [src/components/SwissMotion.tsx](mdc:src/components/SwissMotion.tsx) - Modern motion inspired by Swiss design principles
+- [src/components/ParallaxLayer.tsx](mdc:src/components/ParallaxLayer.tsx) - Subtle parallax scrolling effects
 
-## Animation Utilities
-- [src/utils/animations.ts](mdc:src/utils/animations.ts) - Animation utility functions and configs
-- [src/hooks/useScrollAnimation.ts](mdc:src/hooks/useScrollAnimation.ts) - Hook for scroll-based animations
+## Animation in Section Components
+- [src/components/Hero/index.tsx](mdc:src/components/Hero/index.tsx) - Clean fade and slide animations
+- [src/components/Navbar.tsx](mdc:src/components/Navbar.tsx) - Subtle navigation animations
+- [src/components/Footer.tsx](mdc:src/components/Footer.tsx) - Minimal footer animations
+- [src/components/ScrollIndicator.tsx](mdc:src/components/ScrollIndicator.tsx) - Smooth scroll progress indicator
 
-## CSS Animations
-- [src/app/animations.css](mdc:src/app/animations.css) - CSS animation definitions
+## CSS Animation Definitions
+- [src/app/globals.css](mdc:src/app/globals.css) - Primary CSS animations
+- [src/app/brutalist.css](mdc:src/app/brutalist.css) - Toned-down animations from the original design
+
+## Animation Principles
+The animation system follows these principles:
+1. Subtle and purposeful - enhances usability without distracting
+2. Performance-optimized - uses GPU-accelerated properties
+3. Responsive - adapts to different screen sizes
+4. Accessible - respects user motion preferences
 
 ## Technology
-This project primarily uses Framer Motion for animations combined with the React Intersection Observer library for triggering animations on scroll.
+This project uses Framer Motion for component animations combined with CSS transitions for simpler effects and the React Intersection Observer for scroll-triggered animations.

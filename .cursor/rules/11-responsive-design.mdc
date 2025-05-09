@@ -1,14 +1,14 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Responsive Design Guide
 
-This project implements responsive design using the following patterns and tools.
+This project implements clean, minimalist responsive design using modern techniques.
 
 ## Breakpoints
-Use TailwindCSS breakpoints consistently throughout the application:
+The design uses TailwindCSS breakpoints consistently:
 - `sm`: 640px and up
 - `md`: 768px and up
 - `lg`: 1024px and up
@@ -16,28 +16,36 @@ Use TailwindCSS breakpoints consistently throughout the application:
 - `2xl`: 1536px and up
 
 ## Mobile-First Approach
-- Start with mobile layouts and add complexity for larger screens
-- Use the [src/hooks/useIsMobile.ts](mdc:src/hooks/useIsMobile.ts) hook for client-side responsive logic
+- The portfolio follows a mobile-first philosophy
+- Layouts begin simple on mobile and expand on larger screens
+- Content remains focused and accessible across all screen sizes
 
-## Responsive Components
-Components should adapt to different screen sizes using:
-- Flexbox and Grid layouts
-- Tailwind's responsive modifiers (e.g., `md:flex-row`)
-- Container queries where appropriate
+## Key Responsive Components
+- [src/components/Navbar.tsx](mdc:src/components/Navbar.tsx) - Transforms to mobile menu on smaller screens
+- [src/components/Hero/index.tsx](mdc:src/components/Hero/index.tsx) - Adjusts layout and typography responsively
+- [src/components/Footer.tsx](mdc:src/components/Footer.tsx) - Adapts grid layout for different devices
+
+## Responsive Implementation Techniques
+- Fluid typography using relative units
+- Minimal breakpoint-specific styles for cleaner code
+- Strategic use of grid and flexbox layouts
+- Appropriate spacing and whitespace adjustments
 
 ```tsx
-// Example responsive class usage:
-<div className="flex flex-col md:flex-row">
-  {/* Content */}
+// Example responsive pattern:
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+  {/* Content that adapts to grid layout */}
 </div>
 ```
 
-## Images and Media
-- Use Next.js Image component with appropriate responsive options
-- Ensure images have proper alt text for accessibility
-- Consider loading different image sizes based on viewport
+## Visual Elements
+- Clean typography that scales appropriately
+- Images and decorative elements that resize proportionally
+- Subtle animations that work across device capabilities
+- CSS variables for consistent spacing ([src/app/globals.css](mdc:src/app/globals.css))
 
-## Text and Typography
-- Use relative units (rem) for font sizes
-- Adjust line heights and letter spacing for readability
-- Use Tailwind's typography classes consistently
+## Responsive Design Principles
+1. Maintain content hierarchy regardless of screen size
+2. Preserve white space for readability
+3. Ensure touch targets are appropriately sized on mobile
+4. Optimize performance across all devices
