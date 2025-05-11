@@ -41,7 +41,7 @@ function FeaturedProject({ project }: { project: ProjectData }) {
           className="flex items-center gap-4 hover:text-[var(--accent)] transition-colors group" 
         >
           <span className="font-mono text-base group-hover:underline flex items-center">
-            VIEW PROJECT 
+            VIEW PROJECT
             <ArrowUpRight className="ml-2 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
           </span>
           <Github size={22} className="transform group-hover:rotate-12 transition-transform" />
